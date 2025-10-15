@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberConnect - Plataforma de Barbearias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+        }
+        .star-rating {
+            color: #ffd700;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background-color: #10b981;
+        }
+        .notification.error {
+            background-color: #ef4444;
+        }
+        .auth-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+        .auth-card {
+            backdrop-filter: blur(20px);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            transform: translateY(-24px) scale(0.8);
+            color: #ffd700;
+        }
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            color: #94a3b8;
+        }
+        .barbershop-card {
+            background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Auth Section (Login/Register) -->
+    <section id="auth" class="section active auth-container">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="w-full max-w-md">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cut text-black text-2xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white mb-2">BarberConnect</h1>
+                    <p class="text-gray-400">Conectando você às melhores barbearias</p>
+                </div>
+
+                <!-- Auth Toggle -->
+                <div class="flex bg-gray-800 rounded-lg p-1 mb-6">
+                    <button id="loginTab" onclick="showAuthForm('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-yellow-400 text-black">
+                        Entrar
+                    </button>
+                    <button id="registerTab" onclick="showAuthForm('register')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-white">
+                        Cadastrar
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Bem-vindo de volta!</h2>
+                    <form onsubmit="login(event)">
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <input type="email" id="loginEmail" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>E-mail</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="loginPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Senha</label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-yellow-400 bg-transparent border-gray-600 rounded focus:ring-yellow-400">
+                                    <span class="ml-2 text-sm text-gray-400">Lembrar-me</span>
+                                </label>
+                                <a href="#" class="text-sm text-yellow-400 hover:text-yellow-300">Esqueceu a senha?</a>
+                            </div>
+                            <button type="submit" class="w-full gold-gradient text-black py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Entrar
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-600"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-gray-800 text-gray-400">ou continue com</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <button class="flex justify-center items-center px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+                                <i class="fab fa-google text-red-400 mr-2"></i>
+                                Google
+                            </button>
+                            <button class="flex justify-center items-center px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+                                <i class="fab fa-facebook text-blue-400 mr-2"></i>
+                                Facebook
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="auth-card rounded-2xl p-8 hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Criar conta</h2>
+                    <form onsubmit="register(event)">
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <select id="accountType" onchange="toggleProfessionalFields()" class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    <option value="" disabled selected>Tipo de conta</option>
+                                    <option value="client" class="bg-gray-800">Cliente</option>
+                                    <option value="barbershop" class="bg-gray-800">Proprietário de Barbearia</option>
+                                    <option value="barber" class="bg-gray-800">Barbeiro Profissional</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Professional Fields -->
+                            <div id="professionalFields" class="hidden space-y-6">
+                                <div class="input-group">
+                                    <input type="text" id="registerCPF" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    <label>CPF</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" id="registerCRB" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors">
+                                    <label>Registro Profissional (CRB)</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="number" id="registerExperience" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    <label>Anos de experiência</label>
+                                </div>
+                                <div class="input-group">
+                                    <textarea id="registerSpecialties" placeholder=" " rows="3" class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors resize-none" required></textarea>
+                                    <label>Especialidades (separadas por vírgula)</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="file" id="registerCertificates" accept="image/*,.pdf" multiple class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors">
+                                    <label>Certificados/Diplomas</label>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="registerName" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Nome completo</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="registerEmail" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>E-mail</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="tel" id="registerPhone" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Telefone</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="registerPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Senha</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="confirmPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Confirmar senha</label>
+                            </div>
+                            <div class="flex items-start">
+                                <input type="checkbox" id="terms" class="w-4 h-4 text-yellow-400 bg-transparent border-gray-600 rounded focus:ring-yellow-400 mt-1" required>
+                                <label for="terms" class="ml-2 text-sm text-gray-400">
+                                    Concordo com os <a href="#" class="text-yellow-400 hover:text-yellow-300">Termos de Uso</a> e <a href="#" class="text-yellow-400 hover:text-yellow-300">Política de Privacidade</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="w-full gold-gradient text-black py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Criar conta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App Section -->
+    <section id="app" class="section">
+        <!-- Header -->
+        <header class="bg-transparent backdrop-blur-md border-b border-gray-800/50 sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-cut text-black text-lg"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-white">BarberConnect</h1>
+                    </div>
+                    
+                    <nav id="navigation" class="hidden md:flex space-x-8">
+                        <a href="#" onclick="showAppSection('home')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Início</a>
+                        <a href="#" onclick="showAppSection('barbershops')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Barbearias</a>
+                        <a href="#" onclick="showAppSection('nearby')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Por Perto</a>
+                        <a href="#" onclick="showAppSection('appointments')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Agendamentos</a>
+                        <a href="#" onclick="showAppSection('favorites')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Favoritos</a>
+                    </nav>
+
+                    <div class="flex items-center space-x-4">
+                        <div id="userInfo" class="flex items-center space-x-3">
+                            <img id="userAvatar" src="" alt="Avatar do usuário" class="w-8 h-8 rounded-full">
+                            <span id="userName" class="text-sm"></span>
+                            <button onclick="logout()" class="text-red-400 hover:text-red-300">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile menu -->
+                <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 border-t border-gray-800/50 pt-4">
+                    <nav class="flex flex-col space-y-3">
+                        <a href="#" onclick="showAppSection('home')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Início</a>
+                        <a href="#" onclick="showAppSection('barbershops')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Barbearias</a>
+                        <a href="#" onclick="showAppSection('nearby')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Por Perto</a>
+                        <a href="#" onclick="showAppSection('appointments')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Agendamentos</a>
+                        <a href="#" onclick="showAppSection('favorites')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Favoritos</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content" class="min-h-screen">
+            <!-- Home Section -->
+            <section id="home" class="app-section active">
+                <!-- Hero Banner -->
+                <div class="relative h-96 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 flex items-center" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&h=400&fit=crop'); background-size: cover; background-position: center;">
+                    <div class="container mx-auto px-4 text-center">
+                        <h2 class="text-5xl font-bold mb-4">Encontre a Barbearia Perfeita</h2>
+                        <p class="text-xl mb-8 text-gray-300">Conecte-se com as melhores barbearias da sua região</p>
+                        <div class="flex justify-center">
+                            <div class="relative max-w-md w-full">
+                                <input type="text" placeholder="Buscar barbearias..." class="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:border-yellow-400">
+                                <button class="absolute right-2 top-2 bg-yellow-400 text-black p-2 rounded-md hover:bg-yellow-500 transition-colors">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Barbershops -->
+                <div class="container mx-auto px-4 py-16">
+                    <h3 class="text-3xl font-bold text-center mb-12">Barbearias em Destaque</h3>
+                    <div class="grid md:grid-cols-3 gap-8" id="featuredBarbershops">
+                        <!-- Barbershops will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="bg-gray-800 py-16">
+                    <div class="container mx-auto px-4">
+                        <h3 class="text-3xl font-bold text-center mb-12">Categorias de Serviços</h3>
+                        <div class="grid md:grid-cols-4 gap-6">
+                            <div class="text-center p-6 bg-gray-700 rounded-lg card-hover">
+                                <i class="fas fa-cut text-4xl text-yellow-400 mb-4"></i>
+                                <h4 class="text-lg font-semibold mb-2">Cortes Clássicos</h4>
+                                <p class="text-gray-400 text-sm">Cortes tradicionais e atemporais</p>
+                            </div>
+                            <div class="text-center p-6 bg-gray-700 rounded-lg card-hover">
+                                <i class="fas fa-user-tie text-4xl text-yellow-400 mb-4"></i>
+                                <h4 class="text-lg font-semibold mb-2">Barbas & Bigodes</h4>
+                                <p class="text-gray-400 text-sm">Design e cuidados faciais</p>
+                            </div>
+                            <div class="text-center p-6 bg-gray-700 rounded-lg card-hover">
+                                <i class="fas fa-magic text-4xl text-yellow-400 mb-4"></i>
+                                <h4 class="text-lg font-semibold mb-2">Cortes Modernos</h4>
+                                <p class="text-gray-400 text-sm">Tendências e estilos atuais</p>
+                            </div>
+                            <div class="text-center p-6 bg-gray-700 rounded-lg card-hover">
+                                <i class="fas fa-spa text-4xl text-yellow-400 mb-4"></i>
+                                <h4 class="text-lg font-semibold mb-2">Tratamentos</h4>
+                                <p class="text-gray-400 text-sm">Cuidados especiais e relaxamento</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Barbershops Section -->
+            <section id="barbershops" class="app-section hidden">
+                <div class="container mx-auto px-4 py-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Barbearias</h2>
+                        <div class="flex space-x-4">
+                            <select class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                                <option>Ordenar por</option>
+                                <option>Avaliação</option>
+                                <option>Distância</option>
+                                <option>Preço</option>
+                            </select>
+                            <button class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-filter mr-2"></i>Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6" id="barbershopsList">
+                        <!-- Barbershops will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Nearby Barbershops Section -->
+            <section id="nearby" class="app-section hidden">
+                <div class="container mx-auto px-4 py-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Barbearias Por Perto</h2>
+                        <button onclick="requestLocation()" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-location-arrow mr-2"></i>Usar Localização
+                        </button>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-yellow-400 mr-3"></i>
+                                <span id="currentLocation" class="text-gray-300">São Paulo, SP - Centro</span>
+                            </div>
+                            <span class="text-sm text-gray-400">Raio: 5km</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6" id="nearbyBarbershopsList">
+                        <!-- Nearby barbershops will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Barbershop Profile Section -->
+            <section id="barbershop-profile" class="app-section hidden">
+                <div id="barbershopProfileContent">
+                    <!-- Profile content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments" class="app-section hidden">
+                <div class="container mx-auto px-4 py-8">
+                    <h2 class="text-3xl font-bold mb-8">Meus Agendamentos</h2>
+                    
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <div class="bg-gray-800 rounded-lg p-6">
+                                <h3 class="text-xl font-semibold mb-6">Próximos Agendamentos</h3>
+                                <div id="appointmentsList">
+                                    <!-- Appointments will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                <h3 class="text-xl font-semibold mb-4">Estatísticas</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Total de cortes:</span>
+                                        <span class="font-semibold">23</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Barbearia favorita:</span>
+                                        <span class="font-semibold">BarberPro</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Economia total:</span>
+                                        <span class="font-semibold text-green-400">R$ 127,50</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-800 rounded-lg p-6">
+                                <h3 class="text-xl font-semibold mb-4">Pontuação de Credibilidade</h3>
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl font-bold text-white" id="credibilityScore">95</span>
+                                    </div>
+                                    <p class="text-green-400 font-semibold">Excelente</p>
+                                    <p class="text-gray-400 text-sm mt-2">Mantenha sua pontualidade!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Favorites Section -->
+            <section id="favorites" class="app-section hidden">
+                <div class="container mx-auto px-4 py-8">
+                    <h2 class="text-3xl font-bold mb-8">Favoritos</h2>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="favoritesList">
+                        <!-- Favorites will be loaded here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </section>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let barbershops = [];
+        let appointments = [];
+        let favorites = [];
+
+        // Sample data
+        const sampleServices = [
+            { id: 1, name: "Corte Simples", price: 35.00, duration: 30, description: "Corte básico com máquina e tesoura" },
+            { id: 2, name: "Corte + Barba", price: 55.00, duration: 45, description: "Corte completo com design de barba" },
+            { id: 3, name: "Barba Completa", price: 25.00, duration: 20, description: "Design e finalização da barba" },
+            { id: 4, name: "Corte Premium", price: 65.00, duration: 60, description: "Corte personalizado com tratamentos" },
+            { id: 5, name: "Sobrancelha", price: 15.00, duration: 15, description: "Design e limpeza das sobrancelhas" },
+            { id: 6, name: "Relaxamento", price: 45.00, duration: 30, description: "Massagem e tratamentos relaxantes" }
+        ];
+
+        const sampleBarbershops = [
+            {
+                id: 1,
+                name: "BarberPro Elite",
+                address: "Rua Augusta, 1234 - Consolação, SP",
+                phone: "(11) 3456-7890",
+                whatsapp: "(11) 99999-8888",
+                rating: 4.9,
+                reviews: 127,
+                distance: "1.2km",
+                image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&h=300&fit=crop",
+                description: "Barbearia premium com mais de 10 anos de tradição no coração de São Paulo. Oferecemos serviços de alta qualidade com profissionais experientes e ambiente sofisticado.",
+                services: ["Corte Clássico", "Barba", "Tratamentos", "Relaxamento"],
+                priceRange: "R$ 35 - R$ 80",
+                hours: {
+                    weekdays: "9h às 19h",
+                    saturday: "8h às 18h",
+                    sunday: "Fechado"
+                },
+                amenities: ["Wi-Fi", "Ar Condicionado", "TV", "Café", "Estacionamento"],
+                gallery: [
+                    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=200&fit=crop"
+                ],
+                products: [
+                    {
+                        id: 1,
+                        name: "Pomada Modeladora Premium",
+                        price: 45.90,
+                        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=200&h=200&fit=crop",
+                        description: "Pomada de alta fixação para todos os tipos de cabelo"
+                    },
+                    {
+                        id: 2,
+                        name: "Óleo para Barba Artesanal",
+                        price: 32.50,
+                        image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&h=200&fit=crop",
+                        description: "Óleo natural para hidratação e brilho da barba"
+                    }
+                ],
+                barbers: [
+                    {
+                        id: 1,
+                        name: "João Silva",
+                        specialty: "Cortes Clássicos",
+                        experience: "5 anos",
+                        rating: 4.9,
+                        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+                        bio: "Especialista em cortes clássicos e modernos, com formação em técnicas europeias."
+                    },
+                    {
+                        id: 2,
+                        name: "Carlos Mendes",
+                        specialty: "Barbas e Bigodes",
+                        experience: "8 anos",
+                        rating: 4.8,
+                        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                        bio: "Mestre em design de barbas e tratamentos faciais masculinos."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Modern Cuts",
+                address: "Av. Paulista, 567 - Bela Vista, SP",
+                phone: "(11) 3234-5678",
+                whatsapp: "(11) 98888-7777",
+                rating: 4.7,
+                reviews: 89,
+                distance: "2.8km",
+                image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=300&fit=crop",
+                description: "Especializada em cortes modernos e tendências atuais. Ambiente jovem e descontraído com as últimas novidades do mundo da barbearia.",
+                services: ["Fade", "Undercut", "Cortes Modernos", "Coloração"],
+                priceRange: "R$ 40 - R$ 90",
+                hours: {
+                    weekdays: "10h às 20h",
+                    saturday: "9h às 19h",
+                    sunday: "10h às 16h"
+                },
+                amenities: ["Wi-Fi", "Música", "Jogos", "Bebidas"],
+                gallery: [
+                    "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=200&fit=crop"
+                ],
+                products: [
+                    {
+                        id: 3,
+                        name: "Cera Texturizadora",
+                        price: 38.90,
+                        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=200&h=200&fit=crop",
+                        description: "Cera para texturização e volume"
+                    }
+                ],
+                barbers: [
+                    {
+                        id: 3,
+                        name: "Rafael Costa",
+                        specialty: "Cortes Modernos",
+                        experience: "6 anos",
+                        rating: 4.9,
+                        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+                        bio: "Especialista em tendências e cortes modernos, sempre atualizado com as novidades."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Vintage Barber",
+                address: "Rua Oscar Freire, 890 - Jardins, SP",
+                phone: "(11) 3567-8901",
+                whatsapp: "(11) 97777-6666",
+                rating: 4.8,
+                reviews: 156,
+                distance: "3.5km",
+                image: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=300&fit=crop",
+                description: "Ambiente clássico com técnicas tradicionais. Uma experiência única que combina tradição e sofisticação em cada atendimento.",
+                services: ["Corte Tradicional", "Barba à Navalha", "Relaxamento", "Massagem"],
+                priceRange: "R$ 50 - R$ 120",
+                hours: {
+                    weekdays: "8h às 18h",
+                    saturday: "8h às 17h",
+                    sunday: "Fechado"
+                },
+                amenities: ["Whisky", "Charutos", "Jornal", "Engraxate"],
+                gallery: [
+                    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=200&fit=crop",
+                    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=200&fit=crop"
+                ],
+                products: [
+                    {
+                        id: 4,
+                        name: "Balm Pós-Barba Clássico",
+                        price: 55.00,
+                        image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&h=200&fit=crop",
+                        description: "Balm tradicional para cuidados pós-barba"
+                    }
+                ],
+                barbers: [
+                    {
+                        id: 4,
+                        name: "Antonio Barbosa",
+                        specialty: "Técnicas Tradicionais",
+                        experience: "15 anos",
+                        rating: 4.9,
+                        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
+                        bio: "Mestre barbeiro com décadas de experiência em técnicas clássicas e tradicionais."
+                    }
+                ]
+            }
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            barbershops = sampleBarbershops;
+            loadFeaturedBarbershops();
+            loadBarbershopsList();
+            loadNearbyBarbershops();
+        });
+
+        // Professional fields toggle
+        function toggleProfessionalFields() {
+            const accountType = document.getElementById('accountType').value;
+            const professionalFields = document.getElementById('professionalFields');
+            
+            if (accountType === 'barbershop' || accountType === 'barber') {
+                professionalFields.classList.remove('hidden');
+                // Make professional fields required
+                document.getElementById('registerCPF').required = true;
+                document.getElementById('registerExperience').required = true;
+                document.getElementById('registerSpecialties').required = true;
+            } else {
+                professionalFields.classList.add('hidden');
+                // Remove required from professional fields
+                document.getElementById('registerCPF').required = false;
+                document.getElementById('registerExperience').required = false;
+                document.getElementById('registerSpecialties').required = false;
+            }
+        }
+
+        // Booking state
+        let currentBooking = {
+            barbershopId: null,
+            serviceId: null,
+            barberId: null,
+            date: null,
+            time: null
+        };
+
+        // Barbershop tabs
+        function showBarbershopTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.barbershop-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.barbershop-tab').forEach(tab => {
+                tab.classList.remove('active', 'border-yellow-400', 'text-yellow-400');
+                tab.classList.add('border-transparent', 'text-gray-400');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active', 'border-yellow-400', 'text-yellow-400');
+            event.target.classList.remove('border-transparent', 'text-gray-400');
+
+            // Load scheduling data if schedule tab is selected
+            if (tabName === 'schedule') {
+                loadSchedulingData();
+            }
+        }
+
+        // Scheduling functions
+        function loadSchedulingData() {
+            loadServices();
+            loadBarbers();
+            loadDates();
+        }
+
+        function loadServices() {
+            const container = document.getElementById('serviceSelection');
+            container.innerHTML = sampleServices.map(service => `
+                <div onclick="selectService(${service.id})" class="service-option bg-gray-700 hover:bg-gray-600 p-4 rounded-lg cursor-pointer transition-colors border-2 border-transparent">
+                    <h5 class="font-semibold mb-1">${service.name}</h5>
+                    <p class="text-gray-400 text-sm mb-2">${service.description}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-400 font-semibold">R$ ${service.price.toFixed(2)}</span>
+                        <span class="text-gray-400 text-sm">${service.duration}min</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadBarbers() {
+            const barbershop = barbershops.find(b => b.id === currentBooking.barbershopId);
+            if (!barbershop) return;
+
+            const container = document.getElementById('barberSelection');
+            container.innerHTML = barbershop.barbers.map(barber => `
+                <div onclick="selectBarber(${barber.id})" class="barber-option bg-gray-700 hover:bg-gray-600 p-4 rounded-lg cursor-pointer transition-colors border-2 border-transparent">
+                    <div class="flex items-center mb-3">
+                        <img src="${barber.image}" alt="${barber.name}" class="w-12 h-12 rounded-full mr-3 object-cover">
+                        <div>
+                            <h5 class="font-semibold">${barber.name}</h5>
+                            <p class="text-gray-400 text-sm">${barber.specialty}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="star-rating text-sm">
+                            ${generateStars(barber.rating)}
+                            <span class="ml-1 text-gray-300">${barber.rating}</span>
+                        </div>
+                        <span class="text-gray-400 text-sm">${barber.experience}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadDates() {
+            const container = document.getElementById('dateSelection');
+            const today = new Date();
+            const dates = [];
+
+            // Generate next 14 days
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                dates.push(date);
+            }
+
+            container.innerHTML = dates.map(date => {
+                const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
+                const dayNumber = date.getDate();
+                const monthName = date.toLocaleDateString('pt-BR', { month: 'short' });
+                const isToday = date.toDateString() === today.toDateString();
+                const dateString = date.toISOString().split('T')[0];
+
+                return `
+                    <div onclick="selectDate('${dateString}')" class="date-option bg-gray-700 hover:bg-gray-600 p-3 rounded-lg cursor-pointer transition-colors border-2 border-transparent text-center ${isToday ? 'ring-2 ring-yellow-400' : ''}">
+                        <div class="text-gray-400 text-xs uppercase">${dayName}</div>
+                        <div class="text-lg font-semibold">${dayNumber}</div>
+                        <div class="text-gray-400 text-xs">${monthName}</div>
+                        ${isToday ? '<div class="text-yellow-400 text-xs mt-1">Hoje</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadTimes() {
+            const container = document.getElementById('timeSelection');
+            
+            // Generate available times (9:00 to 18:00, 30min intervals)
+            const times = [];
+            for (let hour = 9; hour < 18; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const isAvailable = Math.random() > 0.3; // 70% chance of being available
+                    times.push({ time: timeString, available: isAvailable });
+                }
+            }
+
+            container.innerHTML = times.map(timeSlot => `
+                <button onclick="selectTime('${timeSlot.time}')" 
+                        class="time-option p-3 rounded-lg text-sm font-medium transition-colors border-2 border-transparent ${
+                            timeSlot.available 
+                                ? 'bg-gray-700 hover:bg-gray-600 text-white cursor-pointer' 
+                                : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                        }" 
+                        ${!timeSlot.available ? 'disabled' : ''}>
+                    ${timeSlot.time}
+                </button>
+            `).join('');
+        }
+
+        function selectService(serviceId) {
+            currentBooking.serviceId = serviceId;
+            const service = sampleServices.find(s => s.id === serviceId);
+            
+            // Update UI
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.classList.remove('border-yellow-400', 'bg-yellow-600');
+                option.classList.add('border-transparent');
+            });
+            event.target.closest('.service-option').classList.add('border-yellow-400');
+            
+            // Update summary
+            document.getElementById('selectedService').classList.remove('hidden');
+            document.getElementById('serviceName').textContent = service.name;
+            document.getElementById('servicePrice').textContent = `R$ ${service.price.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = `R$ ${service.price.toFixed(2)}`;
+            
+            updateBookingButton();
+        }
+
+        function selectBarber(barberId) {
+            currentBooking.barberId = barberId;
+            const barbershop = barbershops.find(b => b.id === currentBooking.barbershopId);
+            const barber = barbershop.barbers.find(b => b.id === barberId);
+            
+            // Update UI
+            document.querySelectorAll('.barber-option').forEach(option => {
+                option.classList.remove('border-yellow-400');
+                option.classList.add('border-transparent');
+            });
+            event.target.closest('.barber-option').classList.add('border-yellow-400');
+            
+            // Update summary
+            document.getElementById('selectedBarber').classList.remove('hidden');
+            document.getElementById('barberName').textContent = barber.name;
+            
+            updateBookingButton();
+        }
+
+        function selectDate(dateString) {
+            currentBooking.date = dateString;
+            const date = new Date(dateString + 'T00:00:00');
+            
+            // Update UI
+            document.querySelectorAll('.date-option').forEach(option => {
+                option.classList.remove('border-yellow-400');
+                option.classList.add('border-transparent');
+            });
+            event.target.closest('.date-option').classList.add('border-yellow-400');
+            
+            // Update summary
+            document.getElementById('selectedDate').classList.remove('hidden');
+            document.getElementById('dateName').textContent = date.toLocaleDateString('pt-BR');
+            
+            // Load available times for selected date
+            loadTimes();
+            
+            updateBookingButton();
+        }
+
+        function selectTime(timeString) {
+            currentBooking.time = timeString;
+            
+            // Update UI
+            document.querySelectorAll('.time-option').forEach(option => {
+                option.classList.remove('border-yellow-400', 'bg-yellow-600');
+            });
+            event.target.classList.add('border-yellow-400', 'bg-yellow-600');
+            
+            // Update summary
+            document.getElementById('selectedTime').classList.remove('hidden');
+            document.getElementById('timeName').textContent = timeString;
+            
+            updateBookingButton();
+        }
+
+        function updateBookingButton() {
+            const button = document.getElementById('confirmBooking');
+            const isComplete = currentBooking.serviceId && currentBooking.barberId && currentBooking.date && currentBooking.time;
+            
+            if (isComplete) {
+                button.disabled = false;
+                button.classList.remove('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
+                button.classList.add('bg-yellow-600', 'hover:bg-yellow-700', 'text-black', 'cursor-pointer');
+                button.textContent = 'Confirmar Agendamento';
+            } else {
+                button.disabled = true;
+                button.classList.add('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
+                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'text-black', 'cursor-pointer');
+                button.textContent = 'Selecione todas as opções';
+            }
+        }
+
+        function confirmBooking() {
+            if (!currentUser) {
+                showNotification('Faça login para agendar!', 'error');
+                return;
+            }
+
+            const service = sampleServices.find(s => s.id === currentBooking.serviceId);
+            const barbershop = barbershops.find(b => b.id === currentBooking.barbershopId);
+            const barber = barbershop.barbers.find(b => b.id === currentBooking.barberId);
+
+            const newAppointment = {
+                id: Date.now(),
+                barbershop: barbershop.name,
+                barber: barber.name,
+                service: service.name,
+                date: currentBooking.date,
+                time: currentBooking.time,
+                status: 'confirmado',
+                price: service.price
+            };
+
+            appointments.push(newAppointment);
+            
+            // Reset booking state
+            currentBooking = {
+                barbershopId: null,
+                serviceId: null,
+                barberId: null,
+                date: null,
+                time: null
+            };
+
+            showNotification('Agendamento confirmado com sucesso!');
+            showAppSection('appointments');
+            loadAppointmentsList();
+        }
+
+        // Location functions
+        function requestLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        document.getElementById('currentLocation').textContent = `Localização atual (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                        showNotification('Localização atualizada!');
+                        loadNearbyBarbershops();
+                    },
+                    function(error) {
+                        showNotification('Erro ao obter localização', 'error');
+                    }
+                );
+            } else {
+                showNotification('Geolocalização não suportada', 'error');
+            }
+        }
+
+        function loadNearbyBarbershops() {
+            const container = document.getElementById('nearbyBarbershopsList');
+            
+            container.innerHTML = barbershops.map(barbershop => `
+                <div class="barbershop-card rounded-lg overflow-hidden card-hover">
+                    <div class="flex">
+                        <img src="${barbershop.image}" alt="${barbershop.name}" class="w-32 h-32 object-cover">
+                        <div class="flex-1 p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-lg font-semibold">${barbershop.name}</h4>
+                                <div class="text-right">
+                                    <span class="text-yellow-400 font-semibold text-sm">${barbershop.distance}</span>
+                                    <button onclick="toggleFavorite(${barbershop.id})" class="block text-gray-400 hover:text-yellow-400 mt-1">
+                                        <i class="fas fa-heart ${favorites.includes(barbershop.id) ? 'text-yellow-400' : ''}"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">${barbershop.address}</p>
+                            <div class="flex items-center mb-2">
+                                <div class="star-rating mr-2 text-sm">
+                                    ${generateStars(barbershop.rating)}
+                                </div>
+                                <span class="text-sm text-gray-300">${barbershop.rating} (${barbershop.reviews})</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                ${barbershop.services.slice(0, 3).map(service => 
+                                    `<span class="bg-yellow-600 text-black px-2 py-1 rounded text-xs">${service}</span>`
+                                ).join('')}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-semibold text-sm">${barbershop.priceRange}</span>
+                                <button onclick="viewBarbershop(${barbershop.id})" class="bg-yellow-600 hover:bg-yellow-700 text-black px-4 py-1 rounded text-sm transition-colors">
+                                    Ver Perfil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Store functions
+        function addToCart(productId) {
+            if (!currentUser) {
+                showNotification('Faça login para comprar!', 'error');
+                return;
+            }
+            showNotification('Produto adicionado ao carrinho!');
+        }
+
+        function openAddProductModal() {
+            // This would open a modal for adding products (barbershop owners only)
+            showNotification('Modal de adicionar produto (em desenvolvimento)');
+        }
+
+        function openImageModal(imageUrl) {
+            // This would open a modal to view the image in full size
+            window.open(imageUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        function openWhatsApp(phone) {
+            const message = encodeURIComponent('Olá! Gostaria de agendar um horário.');
+            window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=${message}`, '_blank', 'noopener,noreferrer');
+        }
+
+        // Auth functions
+        function showAuthForm(type) {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            if (type === 'login') {
+                loginTab.classList.add('bg-yellow-400', 'text-black');
+                loginTab.classList.remove('text-gray-400');
+                registerTab.classList.remove('bg-yellow-400', 'text-black');
+                registerTab.classList.add('text-gray-400');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerTab.classList.add('bg-yellow-400', 'text-black');
+                registerTab.classList.remove('text-gray-400');
+                loginTab.classList.remove('bg-yellow-400', 'text-black');
+                loginTab.classList.add('text-gray-400');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Simulate login
+            currentUser = {
+                id: 1,
+                name: 'João Cliente',
+                email: email,
+                type: 'client',
+                credibility: 95,
+                avatar: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"%3E%3Ccircle cx="16" cy="16" r="14" fill="%23374151"/%3E%3Ccircle cx="16" cy="12" r="5" fill="%23d1d5db"/%3E%3Cpath d="M6 24 Q16 20 26 24" fill="%23d1d5db"/%3E%3C/svg%3E'
+            };
+
+            showSection('app');
+            updateUserInterface();
+            showNotification('Login realizado com sucesso!');
+            loadUserData();
+        }
+
+        function register(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const type = document.getElementById('accountType').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showNotification('As senhas não coincidem!', 'error');
+                return;
+            }
+
+            // Simulate registration
+            currentUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                type: type,
+                credibility: 100,
+                avatar: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"%3E%3Ccircle cx="16" cy="16" r="14" fill="%23374151"/%3E%3Ccircle cx="16" cy="12" r="5" fill="%23d1d5db"/%3E%3Cpath d="M6 24 Q16 20 26 24" fill="%23d1d5db"/%3E%3C/svg%3E'
+            };
+
+            showSection('app');
+            updateUserInterface();
+            showNotification('Cadastro realizado com sucesso!');
+            loadUserData();
+        }
+
+        function logout() {
+            currentUser = null;
+            appointments = [];
+            favorites = [];
+            showSection('auth');
+            showNotification('Logout realizado com sucesso!');
+        }
+
+        function updateUserInterface() {
+            if (currentUser) {
+                document.getElementById('userAvatar').src = currentUser.avatar;
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('credibilityScore').textContent = currentUser.credibility;
+            }
+        }
+
+        function loadUserData() {
+            // Load user appointments
+            appointments = [
+                {
+                    id: 1,
+                    barbershop: "BarberPro Elite",
+                    barber: "João Silva",
+                    service: "Corte + Barba",
+                    date: "2024-01-15",
+                    time: "14:30",
+                    status: "confirmado"
+                }
+            ];
+
+            // Load favorites
+            favorites = [1, 3]; // Barbershop IDs
+
+            loadAppointmentsList();
+            loadFavoritesList();
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function showAppSection(sectionId) {
+            document.querySelectorAll('.app-section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.classList.add('active');
+            }
+
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-yellow-400');
+            });
+            
+            const currentLink = document.querySelector(`[onclick="showAppSection('${sectionId}')"]`);
+            if (currentLink) {
+                currentLink.classList.add('text-yellow-400');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Barbershops
+        function loadFeaturedBarbershops() {
+            const container = document.getElementById('featuredBarbershops');
+            const featured = barbershops.slice(0, 3);
+            
+            container.innerHTML = featured.map(barbershop => `
+                <div class="barbershop-card rounded-lg overflow-hidden card-hover">
+                    <img src="${barbershop.image}" alt="${barbershop.name}" class="h-48 w-full object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold mb-2">${barbershop.name}</h4>
+                        <p class="text-gray-400 text-sm mb-3">${barbershop.address}</p>
+                        <div class="flex items-center mb-4">
+                            <div class="star-rating mr-2">
+                                ${generateStars(barbershop.rating)}
+                            </div>
+                            <span class="text-sm text-gray-300">${barbershop.rating} (${barbershop.reviews} avaliações)</span>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">${barbershop.description}</p>
+                        <button onclick="viewBarbershop(${barbershop.id})" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg transition-colors">
+                            Ver Perfil
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadBarbershopsList() {
+            const container = document.getElementById('barbershopsList');
+            
+            container.innerHTML = barbershops.map(barbershop => `
+                <div class="barbershop-card rounded-lg overflow-hidden card-hover">
+                    <div class="flex">
+                        <img src="${barbershop.image}" alt="${barbershop.name}" class="w-32 h-32 object-cover">
+                        <div class="flex-1 p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-lg font-semibold">${barbershop.name}</h4>
+                                <button onclick="toggleFavorite(${barbershop.id})" class="text-gray-400 hover:text-yellow-400">
+                                    <i class="fas fa-heart ${favorites.includes(barbershop.id) ? 'text-yellow-400' : ''}"></i>
+                                </button>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">${barbershop.address}</p>
+                            <div class="flex items-center mb-2">
+                                <div class="star-rating mr-2 text-sm">
+                                    ${generateStars(barbershop.rating)}
+                                </div>
+                                <span class="text-sm text-gray-300">${barbershop.rating} (${barbershop.reviews})</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                ${barbershop.services.slice(0, 3).map(service => 
+                                    `<span class="bg-yellow-600 text-black px-2 py-1 rounded text-xs">${service}</span>`
+                                ).join('')}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-semibold text-sm">${barbershop.priceRange}</span>
+                                <button onclick="viewBarbershop(${barbershop.id})" class="bg-yellow-600 hover:bg-yellow-700 text-black px-4 py-1 rounded text-sm transition-colors">
+                                    Ver Perfil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewBarbershop(id) {
+            const barbershop = barbershops.find(b => b.id === id);
+            if (!barbershop) return;
+
+            const content = document.getElementById('barbershopProfileContent');
+            content.innerHTML = `
+                <div class="relative h-64 bg-gradient-to-r from-gray-900 to-gray-800" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${barbershop.image}'); background-size: cover; background-position: center;">
+                    <div class="absolute inset-0 flex items-end">
+                        <div class="container mx-auto px-4 pb-8">
+                            <button onclick="showAppSection('barbershops')" class="mb-4 text-yellow-400 hover:text-yellow-300">
+                                <i class="fas fa-arrow-left mr-2"></i>Voltar
+                            </button>
+                            <h1 class="text-4xl font-bold mb-2">${barbershop.name}</h1>
+                            <p class="text-gray-300">${barbershop.address}</p>
+                            <div class="flex items-center mt-2">
+                                <div class="star-rating mr-2">
+                                    ${generateStars(barbershop.rating)}
+                                </div>
+                                <span class="text-gray-300">${barbershop.rating} (${barbershop.reviews} avaliações)</span>
+                                ${barbershop.distance ? `<span class="ml-4 text-yellow-400">• ${barbershop.distance}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="bg-gray-800 border-b border-gray-700">
+                    <div class="container mx-auto px-4">
+                        <nav class="flex space-x-8">
+                            <button onclick="showBarbershopTab('overview')" class="barbershop-tab active py-4 px-2 border-b-2 border-yellow-400 text-yellow-400 font-medium">Visão Geral</button>
+                            <button onclick="showBarbershopTab('schedule')" class="barbershop-tab py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-white font-medium">Agendar</button>
+                            <button onclick="showBarbershopTab('gallery')" class="barbershop-tab py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-white font-medium">Galeria</button>
+                            <button onclick="showBarbershopTab('team')" class="barbershop-tab py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-white font-medium">Equipe</button>
+                            <button onclick="showBarbershopTab('store')" class="barbershop-tab py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-white font-medium">Loja</button>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="container mx-auto px-4 py-8">
+                    <!-- Overview Tab -->
+                    <div id="overview-tab" class="barbershop-tab-content">
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2">
+                                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                    <h3 class="text-xl font-semibold mb-4">Sobre</h3>
+                                    <p class="text-gray-300 mb-4">${barbershop.description}</p>
+                                    <div class="flex flex-wrap gap-2 mb-6">
+                                        ${barbershop.services.map(service => 
+                                            `<span class="bg-yellow-600 text-black px-3 py-1 rounded">${service}</span>`
+                                        ).join('')}
+                                    </div>
+                                    
+                                    <h4 class="text-lg font-semibold mb-3">Comodidades</h4>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        ${barbershop.amenities.map(amenity => 
+                                            `<div class="flex items-center text-gray-300">
+                                                <i class="fas fa-check text-green-400 mr-2"></i>
+                                                ${amenity}
+                                            </div>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                    <h3 class="text-xl font-semibold mb-4">Informações</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-map-marker-alt text-yellow-400 mr-3"></i>
+                                            <span class="text-gray-300 text-sm">${barbershop.address}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-phone text-yellow-400 mr-3"></i>
+                                            <span class="text-gray-300 text-sm">${barbershop.phone}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i class="fab fa-whatsapp text-yellow-400 mr-3"></i>
+                                            <span class="text-gray-300 text-sm">${barbershop.whatsapp}</span>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-clock text-yellow-400 mr-3 mt-1"></i>
+                                            <div class="text-gray-300 text-sm">
+                                                <div>Seg-Sex: ${barbershop.hours.weekdays}</div>
+                                                <div>Sábado: ${barbershop.hours.saturday}</div>
+                                                <div>Domingo: ${barbershop.hours.sunday}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-dollar-sign text-yellow-400 mr-3"></i>
+                                            <span class="text-gray-300 text-sm">${barbershop.priceRange}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-800 rounded-lg p-6">
+                                    <h3 class="text-xl font-semibold mb-4">Ações</h3>
+                                    <div class="space-y-3">
+                                        <button onclick="toggleFavorite(${barbershop.id})" class="w-full ${favorites.includes(barbershop.id) ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-700 hover:bg-gray-600'} py-2 rounded-lg transition-colors">
+                                            <i class="fas fa-heart mr-2"></i>
+                                            ${favorites.includes(barbershop.id) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                                        </button>
+                                        <button onclick="openWhatsApp('${barbershop.whatsapp}')" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg transition-colors">
+                                            <i class="fab fa-whatsapp mr-2"></i>
+                                            Contato WhatsApp
+                                        </button>
+                                        <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                            <i class="fas fa-share mr-2"></i>
+                                            Compartilhar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Tab -->
+                    <div id="gallery-tab" class="barbershop-tab-content hidden">
+                        <h3 class="text-2xl font-bold mb-6">Galeria de Trabalhos</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${barbershop.gallery.map((image, index) => `
+                                <div class="relative group cursor-pointer" onclick="openImageModal('${image}')">
+                                    <img src="${image}" alt="Trabalho ${index + 1}" class="w-full h-48 object-cover rounded-lg">
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-expand text-white opacity-0 group-hover:opacity-100 text-2xl"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Team Tab -->
+                    <div id="team-tab" class="barbershop-tab-content hidden">
+                        <h3 class="text-2xl font-bold mb-6">Nossa Equipe</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            ${barbershop.barbers.map(barber => `
+                                <div class="bg-gray-800 rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <img src="${barber.image}" alt="${barber.name}" class="w-20 h-20 rounded-full mr-4 object-cover">
+                                        <div>
+                                            <h4 class="text-xl font-semibold">${barber.name}</h4>
+                                            <p class="text-yellow-400">${barber.specialty}</p>
+                                            <p class="text-gray-400 text-sm">${barber.experience} de experiência</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 mb-4">${barber.bio}</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="star-rating">
+                                            ${generateStars(barber.rating)}
+                                            <span class="ml-1 text-gray-300">${barber.rating}</span>
+                                        </div>
+                                        <button onclick="scheduleWithBarber(${barbershop.id}, ${barber.id})" class="bg-yellow-600 hover:bg-yellow-700 text-black px-4 py-2 rounded transition-colors">
+                                            Agendar
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Store Tab -->
+                    <div id="store-tab" class="barbershop-tab-content hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold">Loja da Barbearia</h3>
+                            ${currentUser && currentUser.type === 'barbershop' ? `
+                                <button onclick="openAddProductModal()" class="bg-yellow-600 hover:bg-yellow-700 text-black px-4 py-2 rounded transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Adicionar Produto
+                                </button>
+                            ` : ''}
+                        </div>
+                        
+                        ${barbershop.products && barbershop.products.length > 0 ? `
+                            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${barbershop.products.map(product => `
+                                    <div class="bg-gray-800 rounded-lg overflow-hidden">
+                                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                                        <div class="p-4">
+                                            <h4 class="font-semibold mb-2">${product.name}</h4>
+                                            <p class="text-gray-400 text-sm mb-3">${product.description}</p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-yellow-400 font-bold text-lg">R$ ${product.price.toFixed(2)}</span>
+                                                <button onclick="addToCart(${product.id})" class="bg-yellow-600 hover:bg-yellow-700 text-black px-3 py-1 rounded text-sm transition-colors">
+                                                    Comprar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="text-center py-12">
+                                <i class="fas fa-store text-4xl text-gray-600 mb-4"></i>
+                                <p class="text-gray-400">Nenhum produto disponível ainda</p>
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Schedule Tab -->
+                    <div id="schedule-tab" class="barbershop-tab-content hidden">
+                        <h3 class="text-2xl font-bold mb-6">Agendar Horário</h3>
+                        
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2">
+                                <!-- Service Selection -->
+                                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold mb-4">1. Escolha o Serviço</h4>
+                                    <div class="grid md:grid-cols-2 gap-4" id="serviceSelection">
+                                        <!-- Services will be loaded here -->
+                                    </div>
+                                </div>
+
+                                <!-- Barber Selection -->
+                                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold mb-4">2. Escolha o Profissional</h4>
+                                    <div class="grid md:grid-cols-2 gap-4" id="barberSelection">
+                                        <!-- Barbers will be loaded here -->
+                                    </div>
+                                </div>
+
+                                <!-- Date Selection -->
+                                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold mb-4">3. Escolha a Data</h4>
+                                    <div class="grid grid-cols-7 gap-2" id="dateSelection">
+                                        <!-- Dates will be loaded here -->
+                                    </div>
+                                </div>
+
+                                <!-- Time Selection -->
+                                <div class="bg-gray-800 rounded-lg p-6">
+                                    <h4 class="text-lg font-semibold mb-4">4. Escolha o Horário</h4>
+                                    <div class="grid grid-cols-4 gap-3" id="timeSelection">
+                                        <!-- Times will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Booking Summary -->
+                            <div>
+                                <div class="bg-gray-800 rounded-lg p-6 sticky top-24">
+                                    <h4 class="text-lg font-semibold mb-4">Resumo do Agendamento</h4>
+                                    
+                                    <div class="space-y-4 mb-6">
+                                        <div id="selectedService" class="hidden">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-400">Serviço:</span>
+                                                <span id="serviceName" class="font-semibold"></span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-400">Preço:</span>
+                                                <span id="servicePrice" class="text-yellow-400 font-semibold"></span>
+                                            </div>
+                                        </div>
+
+                                        <div id="selectedBarber" class="hidden">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-400">Profissional:</span>
+                                                <span id="barberName" class="font-semibold"></span>
+                                            </div>
+                                        </div>
+
+                                        <div id="selectedDate" class="hidden">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-400">Data:</span>
+                                                <span id="dateName" class="font-semibold"></span>
+                                            </div>
+                                        </div>
+
+                                        <div id="selectedTime" class="hidden">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-400">Horário:</span>
+                                                <span id="timeName" class="font-semibold"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-gray-700 pt-4 mb-6">
+                                        <div class="flex justify-between items-center text-lg font-semibold">
+                                            <span>Total:</span>
+                                            <span id="totalPrice" class="text-yellow-400">R$ 0,00</span>
+                                        </div>
+                                    </div>
+
+                                    <button id="confirmBooking" onclick="confirmBooking()" disabled class="w-full bg-gray-600 text-gray-400 py-3 rounded-lg font-semibold cursor-not-allowed">
+                                        Confirmar Agendamento
+                                    </button>
+
+                                    <p class="text-gray-400 text-xs mt-3 text-center">
+                                        Você pode cancelar até 2 horas antes do horário agendado
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Set current barbershop for booking
+            currentBooking.barbershopId = id;
+            
+            showAppSection('barbershop-profile');
+        }
+
+        function scheduleWithBarber(barbershopId, barberId) {
+            if (!currentUser) {
+                showNotification('Faça login para agendar!', 'error');
+                return;
+            }
+            
+            // Pre-select the barber and switch to schedule tab
+            currentBooking.barbershopId = barbershopId;
+            currentBooking.barberId = barberId;
+            
+            showBarbershopTab('schedule');
+            
+            // Scroll to schedule tab
+            setTimeout(() => {
+                document.getElementById('schedule-tab').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function toggleFavorite(barbershopId) {
+            if (!currentUser) {
+                showNotification('Faça login para favoritar!', 'error');
+                return;
+            }
+
+            const index = favorites.indexOf(barbershopId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showNotification('Removido dos favoritos!');
+            } else {
+                favorites.push(barbershopId);
+                showNotification('Adicionado aos favoritos!');
+            }
+
+            loadBarbershopsList();
+            loadFavoritesList();
+        }
+
+        function loadAppointmentsList() {
+            const container = document.getElementById('appointmentsList');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-calendar-alt text-4xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">Nenhum agendamento encontrado</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = appointments.map(appointment => `
+                <div class="bg-gray-700 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold mb-1">${appointment.barbershop}</h4>
+                            <p class="text-gray-400 text-sm mb-1">${appointment.barber} - ${appointment.service}</p>
+                            <p class="text-yellow-400 text-sm">${formatDate(appointment.date)} às ${appointment.time}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">${appointment.status}</span>
+                            <button onclick="cancelAppointment(${appointment.id})" class="block mt-2 text-red-400 hover:text-red-300 text-sm">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadFavoritesList() {
+            const container = document.getElementById('favoritesList');
+            const favoriteBarbershops = barbershops.filter(b => favorites.includes(b.id));
+            
+            if (favoriteBarbershops.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <i class="fas fa-heart text-4xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">Nenhuma barbearia favorita ainda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = favoriteBarbershops.map(barbershop => `
+                <div class="barbershop-card rounded-lg overflow-hidden card-hover">
+                    <img src="${barbershop.image}" alt="${barbershop.name}" class="h-32 w-full object-cover">
+                    <div class="p-4">
+                        <h4 class="font-semibold mb-2">${barbershop.name}</h4>
+                        <p class="text-gray-400 text-sm mb-2">${barbershop.address}</p>
+                        <div class="flex items-center mb-3">
+                            <div class="star-rating mr-2 text-sm">
+                                ${generateStars(barbershop.rating)}
+                            </div>
+                            <span class="text-sm text-gray-300">${barbershop.rating}</span>
+                        </div>
+                        <button onclick="viewBarbershop(${barbershop.id})" class="w-full bg-yellow-600 hover:bg-yellow-700 text-black py-2 rounded transition-colors">
+                            Ver Perfil
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function cancelAppointment(appointmentId) {
+            appointments = appointments.filter(app => app.id !== appointmentId);
+            loadAppointmentsList();
+            showNotification('Agendamento cancelado!');
+        }
+
+        // Utility functions
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e1b76433842749',t:'MTc2MDM4ODcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
