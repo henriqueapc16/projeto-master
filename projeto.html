@@ -5,8 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BarberConnect - Plataforma de Barbearias</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="style.css"rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="principal_style.css">
 </head>
+<body class="bg-gray-900 text-white">
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Auth Section (Login/Register) -->
+    <section id="auth" class="section active auth-container">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="w-full max-w-md">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cut text-black text-2xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white mb-2">BarberConnect</h1>
+                    <p class="text-gray-400">Conectando você às melhores barbearias</p>
+                </div>
+
+                <!-- Auth Toggle -->
+                <div class="flex bg-gray-800 rounded-lg p-1 mb-6">
+                    <button id="loginTab" onclick="showAuthForm('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-yellow-400 text-black">
+                        Entrar
+                    </button>
+                    <button id="registerTab" onclick="showAuthForm('register')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-white">
+                        Cadastrar
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Bem-vindo de volta!</h2>
+                    <form onsubmit="login(event)">
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <input type="email" id="loginEmail" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>E-mail</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="loginPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Senha</label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-yellow-400 bg-transparent border-gray-600 rounded focus:ring-yellow-400">
+                                    <span class="ml-2 text-sm text-gray-400">Lembrar-me</span>
+                                </label>
+                                <a href="#" class="text-sm text-yellow-400 hover:text-yellow-300">Esqueceu a senha?</a>
+                            </div>
+                            <button type="submit" class="w-full gold-gradient text-black py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Entrar
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-600"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-gray-800 text-gray-400">ou continue com</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <button class="flex justify-center items-center px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+                                <i class="fab fa-google text-red-400 mr-2"></i>
+                                Google
+                            </button>
+                            <button class="flex justify-center items-center px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+                                <i class="fab fa-facebook text-blue-400 mr-2"></i>
+                                Facebook
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="auth-card rounded-2xl p-8 hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Criar conta</h2>
+                    <form onsubmit="register(event)">
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <select id="accountType" onchange="toggleProfessionalFields()" class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    
+                                    <option value="client" class="bg-gray-800">Cliente</option>
+                                    <option value="barbershop" class="bg-gray-800">Proprietário de Barbearia</option>
+                                    <option value="barber" class="bg-gray-800">Barbeiro Profissional</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Professional Fields -->
+                            <div id="professionalFields" class="hidden space-y-6">
+                                <div class="input-group">
+                                    <input type="text" id="registerCPF" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    <label>CPF</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" id="registerCRB" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors">
+                                    <label>Registro Profissional (CRB)</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="number" min="0" id="registerExperience" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                    <label>Anos de experiência</label>
+                                </div>
+                                <div class="input-group">
+                                    <textarea id="registerSpecialties" placeholder=" " rows="3" class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors resize-none" required></textarea>
+                                    <label>Especialidades (separadas por vírgula)</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="file" id="registerCertificates" accept="image/*,.pdf" multiple class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors">
+                                    <label>Certificados/Diplomas</label>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="registerName" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Nome completo</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="registerEmail" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>E-mail</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="tel" id="registerPhone" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Telefone</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="registerPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Senha</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="confirmPassword" placeholder=" " class="w-full bg-transparent border-2 border-gray-600 rounded-lg px-3 py-3 text-white focus:border-yellow-400 focus:outline-none transition-colors" required>
+                                <label>Confirmar senha</label>
+                            </div>
+                            <div class="flex items-start">
+                                <input type="checkbox" id="terms" class="w-4 h-4 text-yellow-400 bg-transparent border-gray-600 rounded focus:ring-yellow-400 mt-1" required>
+                                <label for="terms" class="ml-2 text-sm text-gray-400">
+                                    Concordo com os <a href="#" class="text-yellow-400 hover:text-yellow-300">Termos de Uso</a> e <a href="#" class="text-yellow-400 hover:text-yellow-300">Política de Privacidade</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="w-full gold-gradient text-black py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Criar conta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Main App Section -->
     <section id="app" class="section">
         <!-- Header -->
@@ -234,8 +382,6 @@
         </main>
     </section>
 
-    
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e1b76433842749',t:'MTc2MDM4ODcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script src="./script.js"> </script>
-</body>
+   </body>
+   <script src="principal_script.js"></script>
 </html>

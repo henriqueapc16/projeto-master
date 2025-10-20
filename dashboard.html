@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberConnect - Sistema Completo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dash_style.css">
+</head>
+<body class="gradient-bg min-h-full text-white">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 sidebar-gradient border-r border-gray-800">
+        <div class="flex h-full flex-col">
+            <!-- Logo -->
+            <div class="flex h-16 shrink-0 items-center px-6 border-b border-gray-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-xl font-bold">BarberConnect</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <a href="#" class="nav-item active flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('home')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                    </svg>
+                    Busca Rapida
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('dashboard')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('agendamentos')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Agendamentos
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('servicos')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    Serviços
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('clientes')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    Clientes
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('financeiro')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                    </svg>
+                    Financeiro
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800" onclick="showPage('configuracao')">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Configuração
+                </a>
+            </nav>
+
+            <!-- Profile -->
+            <div class="border-t border-gray-800 p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="profile-avatar w-10 h-10 rounded-full flex items-center justify-center">
+                        <span class="text-black font-semibold">JP</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">João Pedro</p>
+                        <p class="text-xs text-gray-400 truncate">Barbeiro Premium</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pl-64">
+        <!-- Home Page - Endpoints -->
+        <div id="home" class="page active">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold">Busca Rapida</h1>
+                        <p class="mt-2 text-gray-400">Acesse todas as funcionalidades do sistema</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dashboard Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('dashboard')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Dashboard</h3>
+                            <p class="text-gray-400 text-sm mb-4">Visão geral do negócio, estatísticas e métricas principais</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/dashboard</span>
+                            </div>
+                        </div>
+
+                        <!-- Agendamentos Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('agendamentos')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Agendamentos</h3>
+                            <p class="text-gray-400 text-sm mb-4">Gerenciamento completo de horários e compromissos</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/agendamentos</span>
+                            </div>
+                        </div>
+
+                        <!-- Serviços Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('servicos')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Serviços</h3>
+                            <p class="text-gray-400 text-sm mb-4">Catálogo de serviços, preços e configurações</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/servicos</span>
+                            </div>
+                        </div>
+
+                        <!-- Clientes Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('clientes')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Clientes</h3>
+                            <p class="text-gray-400 text-sm mb-4">Base de clientes, histórico e preferências</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/clientes</span>
+                            </div>
+                        </div>
+
+                        <!-- Financeiro Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('financeiro')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Financeiro</h3>
+                            <p class="text-gray-400 text-sm mb-4">Controle financeiro, receitas e relatórios</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/financeiro</span>
+                            </div>
+                        </div>
+
+                        <!-- Configuração Card -->
+                        <div class="endpoint-card rounded-xl p-6" onclick="showPage('configuracao')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-gray-500/20 text-gray-400 px-2 py-1 rounded-full">Ativo</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Configuração</h3>
+                            <p class="text-gray-400 text-sm mb-4">Configurações do sistema e preferências</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span>/configuracao</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold">Dashboard</h1>
+                        <p class="mt-2 text-gray-400">Visão geral do seu negócio</p>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Receita Hoje</p>
+                                    <p class="text-2xl font-bold stat-number">R$ 1.250</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Agendamentos</p>
+                                    <p class="text-2xl font-bold stat-number">12</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Clientes Ativos</p>
+                                    <p class="text-2xl font-bold stat-number">248</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Taxa Ocupação</p>
+                                    <p class="text-2xl font-bold stat-number">85%</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Próximos Agendamentos</h3>
+                            <div class="space-y-4">
+                                <div class="appointment-card rounded-lg p-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="client-photo bg-gray-600"></div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Carlos Silva</p>
+                                            <p class="text-sm text-gray-400">Corte + Barba</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">14:30</p>
+                                            <p class="text-xs text-gray-400">R$ 45</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="appointment-card rounded-lg p-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="client-photo bg-gray-600"></div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">João Santos</p>
+                                            <p class="text-sm text-gray-400">Corte Social</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">15:00</p>
+                                            <p class="text-xs text-gray-400">R$ 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Serviços Populares</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Corte + Barba</p>
+                                        <p class="text-sm text-gray-400">45 agendamentos</p>
+                                    </div>
+                                    <span class="text-lg font-bold stat-number">R$ 45</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Corte Social</p>
+                                        <p class="text-sm text-gray-400">32 agendamentos</p>
+                                    </div>
+                                    <span class="text-lg font-bold stat-number">R$ 25</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Barba Completa</p>
+                                        <p class="text-sm text-gray-400">28 agendamentos</p>
+                                    </div>
+                                    <span class="text-lg font-bold stat-number">R$ 30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Agendamentos Page -->
+        <div id="agendamentos" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold">Agendamentos</h1>
+                            <p class="mt-2 text-gray-400">Gerencie seus horários e compromissos</p>
+                        </div>
+                        <button class="gold-gradient text-black px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Novo Agendamento
+                        </button>
+                    </div>
+
+                    <!-- Calendar View -->
+                    <div class="premium-card rounded-xl p-6 mb-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-semibold">Hoje - 15 de Janeiro, 2024</h3>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">Anterior</button>
+                                <button class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">Próximo</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="appointment-card rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm font-medium text-green-400">14:00 - 14:45</span>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Confirmado</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="client-photo bg-gray-600"></div>
+                                    <div>
+                                        <p class="font-medium">Carlos Silva</p>
+                                        <p class="text-sm text-gray-400">Corte + Barba</p>
+                                        <p class="text-sm font-medium text-yellow-400">R$ 45,00</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="appointment-card rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm font-medium text-blue-400">15:00 - 15:30</span>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">Agendado</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="client-photo bg-gray-600"></div>
+                                    <div>
+                                        <p class="font-medium">João Santos</p>
+                                        <p class="text-sm text-gray-400">Corte Social</p>
+                                        <p class="text-sm font-medium text-yellow-400">R$ 25,00</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="appointment-card rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm font-medium text-purple-400">16:00 - 16:30</span>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full">Pendente</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="client-photo bg-gray-600"></div>
+                                    <div>
+                                        <p class="font-medium">Pedro Lima</p>
+                                        <p class="text-sm text-gray-400">Barba Completa</p>
+                                        <p class="text-sm font-medium text-yellow-400">R$ 30,00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="premium-card rounded-xl p-6 text-center">
+                            <div class="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Agendar Horário</h3>
+                            <p class="text-gray-400 text-sm">Criar novo agendamento para cliente</p>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 text-center">
+                            <div class="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Ver Agenda</h3>
+                            <p class="text-gray-400 text-sm">Visualizar agenda completa do mês</p>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 text-center">
+                            <div class="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Confirmar Horários</h3>
+                            <p class="text-gray-400 text-sm">Confirmar agendamentos pendentes</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Serviços Page -->
+        <div id="servicos" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold">Serviços</h1>
+                            <p class="mt-2 text-gray-400">Gerencie seu catálogo de serviços</p>
+                        </div>
+                        <button class="gold-gradient text-black px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Adicionar Serviço
+                        </button>
+                    </div>
+
+                    <!-- Services Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-yellow-600 to-yellow-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Corte + Barba</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 45</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Corte moderno com acabamento de barba profissional</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 45min</span>
+                                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Corte Social</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 25</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Corte clássico para o dia a dia</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 30min</span>
+                                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Barba Completa</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 30</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Aparar, modelar e finalizar barba</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 30min</span>
+                                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Tratamento Capilar</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 60</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Hidratação e tratamento completo</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 60min</span>
+                                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Sobrancelha</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 15</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Design e modelagem de sobrancelhas</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 15min</span>
+                                    <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl overflow-hidden card-hover">
+                            <div class="h-48 bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                </svg>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-semibold">Pacote Premium</h3>
+                                    <span class="text-2xl font-bold stat-number">R$ 80</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-4">Corte + Barba + Tratamento + Sobrancelha</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">Duração: 90min</span>
+                                    <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full">Premium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Clientes Page -->
+        <div id="clientes" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold">Clientes</h1>
+                            <p class="mt-2 text-gray-400">Gerencie sua base de clientes</p>
+                        </div>
+                        <button class="gold-gradient text-black px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Adicionar Cliente
+                        </button>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="premium-card rounded-xl p-6 mb-8">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <input type="text" placeholder="Buscar cliente..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500">
+                            </div>
+                            <select class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                <option>Todos os clientes</option>
+                                <option>Clientes ativos</option>
+                                <option>Clientes VIP</option>
+                                <option>Novos clientes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Clients Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">Carlos Silva</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2023</p>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">VIP</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 99999-9999</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>05/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 450</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">João Santos</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2024</p>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">Regular</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 88888-8888</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>10/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 125</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">Pedro Lima</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2024</p>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full">Novo</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 77777-7777</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>12/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 75</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">Roberto Costa</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2023</p>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">VIP</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 66666-6666</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>08/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 680</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">André Oliveira</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2023</p>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">Regular</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 55555-5555</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>14/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 320</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6 card-hover">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="client-photo bg-gray-600 w-16 h-16"></div>
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold">Lucas Ferreira</h3>
+                                    <p class="text-sm text-gray-400">Cliente desde 2024</p>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full">Novo</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Telefone:</span>
+                                    <span>(11) 44444-4444</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Último corte:</span>
+                                    <span>15/01/2024</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total gasto:</span>
+                                    <span class="stat-number font-semibold">R$ 45</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Financeiro Page -->
+        <div id="financeiro" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-7xl">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold">Financeiro</h1>
+                        <p class="mt-2 text-gray-400">Controle suas receitas e despesas</p>
+                    </div>
+
+                    <!-- Financial Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Receita Mensal</p>
+                                    <p class="text-2xl font-bold stat-number">R$ 12.450</p>
+                                    <p class="text-xs text-green-400">+15% vs mês anterior</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Despesas</p>
+                                    <p class="text-2xl font-bold text-red-400">R$ 3.200</p>
+                                    <p class="text-xs text-red-400">+5% vs mês anterior</p>
+                                </div>
+                                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Lucro Líquido</p>
+                                    <p class="text-2xl font-bold stat-number">R$ 9.250</p>
+                                    <p class="text-xs text-green-400">+18% vs mês anterior</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400">Ticket Médio</p>
+                                    <p class="text-2xl font-bold stat-number">R$ 38</p>
+                                    <p class="text-xs text-green-400">+8% vs mês anterior</p>
+                                </div>
+                                <div class="w-12 h-12 gold-gradient rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Receitas Recentes</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Carlos Silva - Corte + Barba</p>
+                                            <p class="text-sm text-gray-400">Hoje, 14:30</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-green-400 font-semibold">+R$ 45</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">João Santos - Corte Social</p>
+                                            <p class="text-sm text-gray-400">Hoje, 15:00</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-green-400 font-semibold">+R$ 25</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Pedro Lima - Barba Completa</p>
+                                            <p class="text-sm text-gray-400">Hoje, 16:00</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-green-400 font-semibold">+R$ 30</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Despesas Recentes</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-red-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Produtos para cabelo</p>
+                                            <p class="text-sm text-gray-400">14/01/2024</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-red-400 font-semibold">-R$ 150</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-red-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Aluguel do espaço</p>
+                                            <p class="text-sm text-gray-400">01/01/2024</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-red-400 font-semibold">-R$ 800</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-red-500/10 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Energia elétrica</p>
+                                            <p class="text-sm text-gray-400">10/01/2024</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-red-400 font-semibold">-R$ 120</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Configuração Page -->
+        <div id="configuracao" class="page">
+            <main class="py-10 px-8">
+                <div class="mx-auto max-w-4xl">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold">Configurações</h1>
+                        <p class="mt-2 text-gray-400">Personalize seu sistema BarberPro</p>
+                    </div>
+
+                    <div class="space-y-8">
+                        <!-- Profile Settings -->
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-6">Perfil do Profissional</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="nome" class="block text-sm font-medium text-gray-300 mb-2">Nome Completo</label>
+                                    <input type="text" id="nome" value="João Pedro Silva" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="telefone" class="block text-sm font-medium text-gray-300 mb-2">Telefone</label>
+                                    <input type="tel" id="telefone" value="(11) 99999-9999" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">E-mail</label>
+                                    <input type="email" id="email" value="joao@barberpro.com" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="especialidade" class="block text-sm font-medium text-gray-300 mb-2">Especialidade</label>
+                                    <input type="text" id="especialidade" value="Barbeiro Premium" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Settings -->
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-6">Configurações do Negócio</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="nome-negocio" class="block text-sm font-medium text-gray-300 mb-2">Nome do Negócio</label>
+                                    <input type="text" id="nome-negocio" value="BarberShop Premium" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="endereco" class="block text-sm font-medium text-gray-300 mb-2">Endereço</label>
+                                    <input type="text" id="endereco" value="Rua das Flores, 123" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="horario-inicio" class="block text-sm font-medium text-gray-300 mb-2">Horário de Abertura</label>
+                                    <input type="time" id="horario-inicio" value="08:00" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                                <div>
+                                    <label for="horario-fim" class="block text-sm font-medium text-gray-300 mb-2">Horário de Fechamento</label>
+                                    <input type="time" id="horario-fim" value="18:00" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Settings -->
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-6">Notificações</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Notificações de Agendamento</p>
+                                        <p class="text-sm text-gray-400">Receber notificações de novos agendamentos</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Lembrete de Horários</p>
+                                        <p class="text-sm text-gray-400">Lembrar dos próximos agendamentos</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Relatórios Financeiros</p>
+                                        <p class="text-sm text-gray-400">Receber relatórios mensais por e-mail</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div class="premium-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-6">Segurança</h3>
+                            <div class="space-y-4">
+                                <button class="w-full md:w-auto bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                    Alterar Senha
+                                </button>
+                                <button class="w-full md:w-auto bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors ml-0 md:ml-4">
+                                    Configurar 2FA
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="flex justify-end">
+                            <button class="gold-gradient text-black px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Salvar Configurações
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="dash_script.js">
+        </script>
+        </body>
+</html>
