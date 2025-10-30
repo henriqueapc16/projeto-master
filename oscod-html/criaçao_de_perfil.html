@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberConnect - Criação de Perfil</title>
+    <script src="/_sdk/data_sdk.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+        }
+        .auth-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+        .auth-card {
+            backdrop-filter: blur(20px);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label,
+        .input-group textarea:focus + label,
+        .input-group textarea:not(:placeholder-shown) + label {
+            transform: translateY(-24px) scale(0.8);
+            color: #ffd700;
+        }
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            color: #94a3b8;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .step-indicator {
+            background: rgba(148, 163, 184, 0.2);
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+        }
+        .step-indicator.completed {
+            background: #10b981;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background-color: #10b981;
+        }
+        .notification.error {
+            background-color: #ef4444;
+        }
+        .image-upload {
+            border: 2px dashed #94a3b8;
+            transition: all 0.3s ease;
+        }
+        .image-upload:hover {
+            border-color: #ffd700;
+            background-color: rgba(255, 215, 0, 0.05);
+        }
+        .service-item, .barber-item, .product-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+    </style>
+    <style>@view-transition { navigation: auto; }</style>
+</head>
+<body class="auth-container">
+<div class="min-h-full flex items-center justify-center p-4">
+    <div class="auth-card rounded-2xl shadow-2xl w-full max-w-4xl p-8"><!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2" id="page-title">BarberConnect</h1>
+            <p class="text-slate-300 text-lg" id="welcome-message">Configure o perfil da sua barbearia</p>
+        </div><!-- Progress Steps -->
+        <div class="flex justify-center mb-8">
+            <div class="flex space-x-4">
+                <div class="step-indicator active w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+                    1
+                </div>
+                <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+                    2
+                </div>
+                <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+                    3
+                </div>
+                <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+                    4
+                </div>
+                <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+                    5
+                </div>
+            </div>
+        </div><!-- Section 1: Informações Básicas -->
+        <div class="section active" id="section-1">
+            <h2 class="text-2xl font-bold text-white mb-6">Informações Básicas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="input-group"><input type="text" id="owner-name" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="owner-name">Nome Completo do Gerente</label>
+                </div>
+                <div class="input-group"><input type="text" id="barbershop-name" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="barbershop-name">Nome da Barbearia</label>
+                </div>
+                <div class="md:col-span-2"><label class="block text-slate-300 mb-2">Foto de Perfil</label> <input type="file" id="profile-photo" accept="image/*" class="hidden" onchange="handleProfilePhoto(this)">
+                    <div class="image-upload rounded-lg p-8 text-center cursor-pointer" onclick="document.getElementById('profile-photo').click()">
+                        <div class="text-slate-400" id="profile-photo-preview">
+                            <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <p>Clique para adicionar foto de perfil</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-2 input-group"><textarea id="description" placeholder=" " rows="4" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none resize-none"></textarea> <label for="description">Descrição da Barbearia</label>
+                </div>
+            </div>
+            <div class="flex justify-end mt-6"><button onclick="nextSection()" class="gold-gradient px-8 py-3 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Próximo </button>
+            </div>
+        </div><!-- Section 2: Localização e Contato -->
+        <div class="section" id="section-2">
+            <h2 class="text-2xl font-bold text-white mb-6">Localização e Contato</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2 input-group"><input type="text" id="location" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="location">Endereço Completo</label>
+                </div>
+                <div class="input-group"><input type="tel" id="phone" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="phone">Número de Telefone</label>
+                </div>
+                <div class="input-group"><input type="text" id="amenities" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="amenities">Comodidades (separadas por vírgula)</label>
+                </div>
+                <div class="input-group"><input type="time" id="opening-hours" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="opening-hours">Horário de Abertura</label>
+                </div>
+                <div class="input-group"><input type="time" id="closing-hours" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="closing-hours">Horário de Fechamento</label>
+                </div>
+                <div class="input-group"><input type="number" id="min-price" placeholder=" " min="0" step="0.01" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="min-price">Preço Mínimo (R$)</label>
+                </div>
+                <div class="input-group"><input type="number" id="max-price" placeholder=" " min="0" step="0.01" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="max-price">Preço Máximo (R$)</label>
+                </div>
+            </div>
+            <div class="flex justify-between mt-6"><button onclick="prevSection()" class="bg-slate-600 px-8 py-3 rounded-lg text-white font-semibold hover:bg-slate-500 transition-colors"> Anterior </button> <button onclick="nextSection()" class="gold-gradient px-8 py-3 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Próximo </button>
+            </div>
+        </div><!-- Section 3: Serviços -->
+        <div class="section" id="section-3">
+            <h2 class="text-2xl font-bold text-white mb-6">Serviços Oferecidos</h2>
+            <div class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="input-group"><input type="text" id="service-name" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="service-name">Nome do Serviço</label>
+                    </div>
+                    <div class="input-group"><input type="text" id="service-description" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="service-description">Descrição</label>
+                    </div>
+                    <div class="input-group"><input type="number" id="service-price" placeholder=" " min="0" step="0.01" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="service-price">Preço (R$)</label>
+                    </div>
+                </div><button onclick="addService()" class="gold-gradient px-6 py-2 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Adicionar Serviço </button>
+            </div>
+            <div id="services-list" class="space-y-3 mb-6"><!-- Services will be added here -->
+            </div>
+            <div class="flex justify-between mt-6"><button onclick="prevSection()" class="bg-slate-600 px-8 py-3 rounded-lg text-white font-semibold hover:bg-slate-500 transition-colors"> Anterior </button> <button onclick="nextSection()" class="gold-gradient px-8 py-3 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Próximo </button>
+            </div>
+        </div><!-- Section 4: Barbeiros -->
+        <div class="section" id="section-4">
+            <h2 class="text-2xl font-bold text-white mb-6">Equipe de Barbeiros</h2>
+            <div class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="input-group"><input type="text" id="barber-name" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="barber-name">Nome do Barbeiro</label>
+                    </div>
+                    <div><label class="block text-slate-300 mb-2">Foto do Barbeiro</label> <input type="file" id="barber-photo" accept="image/*" class="hidden" onchange="handleBarberPhoto(this)">
+                        <div class="image-upload rounded-lg p-4 text-center cursor-pointer" onclick="document.getElementById('barber-photo').click()">
+                            <div class="text-slate-400" id="barber-photo-preview">
+                                <svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <p class="text-sm">Adicionar foto</p>
+                            </div>
+                        </div>
+                    </div>
+                </div><button onclick="addBarber()" class="gold-gradient px-6 py-2 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Adicionar Barbeiro </button>
+            </div>
+            <div id="barbers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"><!-- Barbers will be added here -->
+            </div>
+            <div class="flex justify-between mt-6"><button onclick="prevSection()" class="bg-slate-600 px-8 py-3 rounded-lg text-white font-semibold hover:bg-slate-500 transition-colors"> Anterior </button> <button onclick="nextSection()" class="gold-gradient px-8 py-3 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Próximo </button>
+            </div>
+        </div><!-- Section 5: Produtos -->
+        <div class="section" id="section-5">
+            <h2 class="text-2xl font-bold text-white mb-6">Produtos da Loja</h2>
+            <div class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="input-group"><input type="text" id="product-name" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="product-name">Nome do Produto</label>
+                    </div>
+                    <div class="input-group"><input type="number" id="product-price" placeholder=" " min="0" step="0.01" class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="product-price">Preço (R$)</label>
+                    </div>
+                    <div class="md:col-span-2 input-group"><input type="text" id="product-description" placeholder=" " class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-yellow-400 focus:outline-none"> <label for="product-description">Descrição do Produto</label>
+                    </div>
+                    <div class="md:col-span-2"><label class="block text-slate-300 mb-2">Foto do Produto</label> <input type="file" id="product-photo" accept="image/*" class="hidden" onchange="handleProductPhoto(this)">
+                        <div class="image-upload rounded-lg p-6 text-center cursor-pointer" onclick="document.getElementById('product-photo').click()">
+                            <div class="text-slate-400" id="product-photo-preview">
+                                <svg class="mx-auto h-10 w-10 mb-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <p>Adicionar foto do produto</p>
+                            </div>
+                        </div>
+                    </div>
+                </div><button onclick="addProduct()" class="gold-gradient px-6 py-2 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"> Adicionar Produto </button>
+            </div>
+            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"><!-- Products will be added here -->
+            </div>
+            <div class="flex justify-between mt-6"><button onclick="prevSection()" class="bg-slate-600 px-8 py-3 rounded-lg text-white font-semibold hover:bg-slate-500 transition-colors"> Anterior </button> <button onclick="saveProfile()" class="gold-gradient px-8 py-3 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity" id="save-btn"> Salvar Perfil </button>
+            </div>
+        </div>
+    </div>
+</div><!-- Notification -->
+<div id="notification" class="notification"><span id="notification-text"></span>
+</div>
+<script>
+    let currentSection = 1;
+    const totalSections = 5;
+    let services = [];
+    let barbers = [];
+    let products = [];
+    let isLoading = false;
+
+    const defaultConfig = {
+        page_title: "BarberConnect",
+        welcome_message: "Configure o perfil da sua barbearia"
+    };
+
+    // Data SDK Handler
+    const dataHandler = {
+        onDataChanged(data) {
+            // This is a creation form, so we don't need to display existing data
+            console.log('Data updated:', data.length, 'profiles');
+        }
+    };
+
+    // Element SDK Configuration
+    const elementConfig = {
+        defaultConfig: defaultConfig,
+        onConfigChange: async (config) => {
+            const pageTitle = document.getElementById('page-title');
+            const welcomeMessage = document.getElementById('welcome-message');
+
+            if (pageTitle) {
+                pageTitle.textContent = config.page_title || defaultConfig.page_title;
+            }
+            if (welcomeMessage) {
+                welcomeMessage.textContent = config.welcome_message || defaultConfig.welcome_message;
+            }
+        },
+        mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+            ["page_title", config.page_title || defaultConfig.page_title],
+            ["welcome_message", config.welcome_message || defaultConfig.welcome_message]
+        ])
+    };
+
+    // Initialize SDKs
+    async function initializeApp() {
+        try {
+            if (window.dataSdk) {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    console.error('Failed to initialize data SDK');
+                }
+            }
+
+            if (window.elementSdk) {
+                await window.elementSdk.init(elementConfig);
+            }
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+        }
+    }
+
+    function handleProfilePhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const preview = document.getElementById('profile-photo-preview');
+                preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Foto de perfil" class="w-24 h-24 rounded-full mx-auto object-cover mb-2">
+                        <p class="text-sm">Foto selecionada: ${file.name}</p>
+                    `;
+            };
+
+            reader.readAsDataURL(file);
+            showNotification('Foto de perfil selecionada', 'success');
+        }
+    }
+
+    function handleBarberPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const preview = document.getElementById('barber-photo-preview');
+                preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Foto do barbeiro" class="w-16 h-16 rounded-full mx-auto object-cover mb-2">
+                        <p class="text-xs">Foto selecionada</p>
+                    `;
+            };
+
+            reader.readAsDataURL(file);
+            showNotification('Foto do barbeiro selecionada', 'success');
+        }
+    }
+
+    function handleProductPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const preview = document.getElementById('product-photo-preview');
+                preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Foto do produto" class="w-20 h-20 rounded-lg mx-auto object-cover mb-2">
+                        <p class="text-sm">Foto selecionada: ${file.name}</p>
+                    `;
+            };
+
+            reader.readAsDataURL(file);
+            showNotification('Foto do produto selecionada', 'success');
+        }
+    }
+
+    function nextSection() {
+        if (currentSection < totalSections) {
+            document.getElementById(`section-${currentSection}`).classList.remove('active');
+            currentSection++;
+            document.getElementById(`section-${currentSection}`).classList.add('active');
+            updateStepIndicators();
+        }
+    }
+
+    function prevSection() {
+        if (currentSection > 1) {
+            document.getElementById(`section-${currentSection}`).classList.remove('active');
+            currentSection--;
+            document.getElementById(`section-${currentSection}`).classList.add('active');
+            updateStepIndicators();
+        }
+    }
+
+    function updateStepIndicators() {
+        const indicators = document.querySelectorAll('.step-indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.classList.remove('active', 'completed');
+            if (index + 1 === currentSection) {
+                indicator.classList.add('active');
+            } else if (index + 1 < currentSection) {
+                indicator.classList.add('completed');
+            }
+        });
+    }
+
+    function addService() {
+        const name = document.getElementById('service-name').value.trim();
+        const description = document.getElementById('service-description').value.trim();
+        const price = document.getElementById('service-price').value;
+
+        if (!name || !description || !price) {
+            showNotification('Preencha todos os campos do serviço', 'error');
+            return;
+        }
+
+        const service = {
+            id: Date.now().toString(),
+            name,
+            description,
+            price: parseFloat(price)
+        };
+
+        services.push(service);
+        renderServices();
+        clearServiceForm();
+        showNotification('Serviço adicionado com sucesso', 'success');
+    }
+
+    function renderServices() {
+        const container = document.getElementById('services-list');
+        container.innerHTML = services.map(service => `
+                <div class="service-item p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <h4 class="text-white font-semibold">${service.name}</h4>
+                        <p class="text-slate-300 text-sm">${service.description}</p>
+                        <p class="text-yellow-400 font-semibold">R$ ${service.price.toFixed(2)}</p>
+                    </div>
+                    <button onclick="removeService('${service.id}')" class="text-red-400 hover:text-red-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+    }
+
+    function removeService(id) {
+        services = services.filter(service => service.id !== id);
+        renderServices();
+        showNotification('Serviço removido', 'success');
+    }
+
+    function clearServiceForm() {
+        document.getElementById('service-name').value = '';
+        document.getElementById('service-description').value = '';
+        document.getElementById('service-price').value = '';
+    }
+
+    function addBarber() {
+        const name = document.getElementById('barber-name').value.trim();
+
+        if (!name) {
+            showNotification('Digite o nome do barbeiro', 'error');
+            return;
+        }
+
+        const barber = {
+            id: Date.now().toString(),
+            name
+        };
+
+        barbers.push(barber);
+        renderBarbers();
+        document.getElementById('barber-name').value = '';
+        showNotification('Barbeiro adicionado com sucesso', 'success');
+    }
+
+    function renderBarbers() {
+        const container = document.getElementById('barbers-list');
+        container.innerHTML = barbers.map(barber => `
+                <div class="barber-item p-4 rounded-lg text-center">
+                    <div class="w-16 h-16 bg-slate-600 rounded-full mx-auto mb-3 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-white font-semibold">${barber.name}</h4>
+                    <button onclick="removeBarber('${barber.id}')" class="text-red-400 hover:text-red-300 mt-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+    }
+
+    function removeBarber(id) {
+        barbers = barbers.filter(barber => barber.id !== id);
+        renderBarbers();
+        showNotification('Barbeiro removido', 'success');
+    }
+
+    function addProduct() {
+        const name = document.getElementById('product-name').value.trim();
+        const description = document.getElementById('product-description').value.trim();
+        const price = document.getElementById('product-price').value;
+
+        if (!name || !description || !price) {
+            showNotification('Preencha todos os campos do produto', 'error');
+            return;
+        }
+
+        const product = {
+            id: Date.now().toString(),
+            name,
+            description,
+            price: parseFloat(price)
+        };
+
+        products.push(product);
+        renderProducts();
+        clearProductForm();
+        showNotification('Produto adicionado com sucesso', 'success');
+    }
+
+    function renderProducts() {
+        const container = document.getElementById('products-list');
+        container.innerHTML = products.map(product => `
+                <div class="product-item p-4 rounded-lg">
+                    <div class="w-full h-32 bg-slate-600 rounded-lg mb-3 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-white font-semibold">${product.name}</h4>
+                    <p class="text-slate-300 text-sm mb-2">${product.description}</p>
+                    <div class="flex justify-between items-center">
+                        <p class="text-yellow-400 font-semibold">R$ ${product.price.toFixed(2)}</p>
+                        <button onclick="removeProduct('${product.id}')" class="text-red-400 hover:text-red-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function removeProduct(id) {
+        products = products.filter(product => product.id !== id);
+        renderProducts();
+        showNotification('Produto removido', 'success');
+    }
+
+    function clearProductForm() {
+        document.getElementById('product-name').value = '';
+        document.getElementById('product-description').value = '';
+        document.getElementById('product-price').value = '';
+    }
+
+    async function saveProfile() {
+        if (isLoading) return;
+
+        const ownerName = document.getElementById('owner-name').value.trim();
+        const barbershopName = document.getElementById('barbershop-name').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const location = document.getElementById('location').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const openingHours = document.getElementById('opening-hours').value;
+        const closingHours = document.getElementById('closing-hours').value;
+        const minPrice = document.getElementById('min-price').value;
+        const maxPrice = document.getElementById('max-price').value;
+        const amenities = document.getElementById('amenities').value.trim();
+
+        if (!ownerName || !barbershopName || !description || !location || !phone) {
+            showNotification('Preencha todos os campos obrigatórios', 'error');
+            return;
+        }
+
+        if (services.length === 0) {
+            showNotification('Adicione pelo menos um serviço', 'error');
+            return;
+        }
+
+        isLoading = true;
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.textContent = 'Salvando...';
+        saveBtn.disabled = true;
+
+        try {
+            const profileData = {
+                id: Date.now().toString(),
+                barbershop_name: barbershopName,
+                owner_name: ownerName,
+                description: description,
+                location: location,
+                phone: phone,
+                opening_hours: openingHours,
+                closing_hours: closingHours,
+                min_price: parseFloat(minPrice) || 0,
+                max_price: parseFloat(maxPrice) || 0,
+                amenities: amenities,
+                created_at: new Date().toISOString()
+            };
+
+            if (window.dataSdk) {
+                const result = await window.dataSdk.create(profileData);
+                if (result.isOk) {
+                    showNotification('Perfil criado com sucesso!', 'success');
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
+                } else {
+                    showNotification('Erro ao salvar perfil. Tente novamente.', 'error');
+                }
+            } else {
+                showNotification('Perfil configurado com sucesso!', 'success');
+                setTimeout(() => {
+                    resetForm();
+                }, 2000);
+            }
+        } catch (error) {
+            showNotification('Erro ao salvar perfil. Tente novamente.', 'error');
+        } finally {
+            isLoading = false;
+            saveBtn.textContent = 'Salvar Perfil';
+            saveBtn.disabled = false;
+        }
+    }
+
+    function resetForm() {
+        // Reset all form fields
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.value = '';
+        });
+
+        // Reset arrays
+        services = [];
+        barbers = [];
+        products = [];
+
+        // Reset sections
+        currentSection = 1;
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById('section-1').classList.add('active');
+
+        // Reset step indicators
+        updateStepIndicators();
+
+        // Clear lists
+        renderServices();
+        renderBarbers();
+        renderProducts();
+
+        // Reset photo previews
+        document.getElementById('profile-photo-preview').innerHTML = `
+                <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <p>Clique para adicionar foto de perfil</p>
+            `;
+        document.getElementById('barber-photo-preview').innerHTML = `
+                <svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <p class="text-sm">Adicionar foto</p>
+            `;
+        document.getElementById('product-photo-preview').innerHTML = `
+                <svg class="mx-auto h-10 w-10 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <p>Adicionar foto do produto</p>
+            `;
+    }
+
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Initialize app when page loads
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99562a481139f63a',t:'MTc2MTYwOTc1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

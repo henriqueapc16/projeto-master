@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos - Barber Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+        }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.3);
+        }
+        .star-rating {
+            color: #ffd700;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1001;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: rgba(34, 197, 94, 0.9);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        .notification.error {
+            background: rgba(239, 68, 68, 0.9);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .auth-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+        .auth-card {
+            backdrop-filter: blur(20px);
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            transform: translateY(-24px) scale(0.8);
+            color: #ffd700;
+        }
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            color: #94a3b8;
+        }
+        .barbershop-card {
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .plan-card {
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .plan-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .plan-card.popular {
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+        }
+        .plan-card.popular::before {
+            content: 'MAIS POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+            color: #0a0a0a;
+            padding: 8px 40px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .feature-check {
+            color: #22c55e;
+        }
+        .feature-cross {
+            color: #64748b;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-full text-white">
+<!-- Header -->
+<header class="border-b border-gray-700 bg-black bg-opacity-50 backdrop-filter backdrop-blur-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center shadow-lg">
+                    <span class="text-black font-bold text-xl">✂</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white">Barber Connect</h1>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">Início</a>
+                <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">Barbearias</a>
+                <a href="#" class="text-yellow-400 font-semibold">Planos</a>
+                <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">Contato</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">
+            Escolha o Plano Ideal para sua
+            <span class="text-gradient">Barbearia</span>
+        </h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Aumente sua visibilidade, atraia mais clientes e destaque-se da concorrência com nossos planos de anúncios
+        </p>
+    </div>
+
+    <!-- Plans Grid -->
+    <div class="grid md:grid-cols-3 gap-8 mb-16">
+        <!-- Basic Plan -->
+        <div class="plan-card card-hover rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold mb-2 text-white">Basic</h3>
+                <div class="text-4xl font-bold mb-2 text-white">
+                    R$ <span class="text-gradient">29</span>
+                    <span class="text-lg text-gray-400">/mês</span>
+                </div>
+                <p class="text-gray-400">Ideal para começar</p>
+            </div>
+
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Anúncio básico no site</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Até 5 fotos do estabelecimento</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Informações de contato</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Horário de funcionamento</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-cross mr-3">✗</span>
+                    <span class="text-gray-500">Destaque na busca</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-cross mr-3">✗</span>
+                    <span class="text-gray-500">Posição no topo</span>
+                </li>
+            </ul>
+
+            <button onclick="selectPlan('basic')" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Escolher Basic
+            </button>
+        </div>
+
+        <!-- Plus Plan -->
+        <div class="plan-card card-hover rounded-2xl p-8 popular">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold mb-2 text-white">Plus</h3>
+                <div class="text-4xl font-bold mb-2 text-white">
+                    R$ <span class="text-gradient">59</span>
+                    <span class="text-lg text-gray-400">/mês</span>
+                </div>
+                <p class="text-gray-400">Mais visibilidade</p>
+            </div>
+
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Tudo do plano Basic</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Até 15 fotos do estabelecimento</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Destaque na busca</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Badge "Recomendado"</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Estatísticas básicas</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-cross mr-3">✗</span>
+                    <span class="text-gray-500">Posição no topo</span>
+                </li>
+            </ul>
+
+            <button onclick="selectPlan('plus')" class="w-full gold-gradient text-black font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                Escolher Plus
+            </button>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="plan-card card-hover rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold mb-2 text-white">Pro</h3>
+                <div class="text-4xl font-bold mb-2 text-white">
+                    R$ <span class="text-gradient">99</span>
+                    <span class="text-lg text-gray-400">/mês</span>
+                </div>
+                <p class="text-gray-400">Máxima exposição</p>
+            </div>
+
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Tudo do plano Plus</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Fotos ilimitadas</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Posição no topo da lista</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Badge "Premium"</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Estatísticas avançadas</span>
+                </li>
+                <li class="flex items-center">
+                    <span class="feature-check mr-3">✓</span>
+                    <span class="text-gray-300">Suporte prioritário</span>
+                </li>
+            </ul>
+
+            <button onclick="selectPlan('pro')" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg">
+                Escolher Pro
+            </button>
+        </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="glass-effect rounded-2xl p-8 mb-16">
+        <h3 class="text-2xl font-bold text-center mb-8 text-white">Comparação Detalhada</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                <tr class="border-b border-gray-600">
+                    <th class="pb-4 text-gray-300">Recursos</th>
+                    <th class="pb-4 text-center text-gray-300">Basic</th>
+                    <th class="pb-4 text-center text-gradient font-semibold">Plus</th>
+                    <th class="pb-4 text-center text-gray-300">Pro</th>
+                </tr>
+                </thead>
+                <tbody class="space-y-4">
+                <tr class="border-b border-gray-700">
+                    <td class="py-4 text-gray-300">Anúncio no site</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                </tr>
+                <tr class="border-b border-gray-700">
+                    <td class="py-4 text-gray-300">Número de fotos</td>
+                    <td class="py-4 text-center text-gray-400">5</td>
+                    <td class="py-4 text-center text-gray-400">15</td>
+                    <td class="py-4 text-center text-gray-400">Ilimitadas</td>
+                </tr>
+                <tr class="border-b border-gray-700">
+                    <td class="py-4 text-gray-300">Destaque na busca</td>
+                    <td class="py-4 text-center feature-cross">✗</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                </tr>
+                <tr class="border-b border-gray-700">
+                    <td class="py-4 text-gray-300">Posição no topo</td>
+                    <td class="py-4 text-center feature-cross">✗</td>
+                    <td class="py-4 text-center feature-cross">✗</td>
+                    <td class="py-4 text-center feature-check">✓</td>
+                </tr>
+                <tr class="border-b border-gray-700">
+                    <td class="py-4 text-gray-300">Estatísticas</td>
+                    <td class="py-4 text-center feature-cross">✗</td>
+                    <td class="py-4 text-center text-gray-400">Básicas</td>
+                    <td class="py-4 text-center text-gray-400">Avançadas</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="text-center">
+        <h3 class="text-2xl font-bold mb-8 text-white">Dúvidas Frequentes</h3>
+        <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div class="barbershop-card rounded-xl p-6 shadow-lg">
+                <h4 class="font-semibold mb-2 text-gradient">Posso mudar de plano?</h4>
+                <p class="text-gray-300">Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento.</p>
+            </div>
+            <div class="barbershop-card rounded-xl p-6 shadow-lg">
+                <h4 class="font-semibold mb-2 text-gradient">Como funciona o destaque?</h4>
+                <p class="text-gray-300">Seu anúncio aparece com badge especial e posição privilegiada nos resultados.</p>
+            </div>
+            <div class="barbershop-card rounded-xl p-6 shadow-lg">
+                <h4 class="font-semibold mb-2 text-gradient">Há taxa de cancelamento?</h4>
+                <p class="text-gray-300">Não! Você pode cancelar seu plano a qualquer momento sem taxas extras.</p>
+            </div>
+            <div class="barbershop-card rounded-xl p-6 shadow-lg">
+                <h4 class="font-semibold mb-2 text-gradient">Suporte técnico incluso?</h4>
+                <p class="text-gray-300">Todos os planos incluem suporte. O Pro tem atendimento prioritário.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal de Confirmação -->
+<div id="confirmModal" class="modal">
+    <div class="auth-card rounded-2xl p-8 max-w-md w-full mx-4">
+        <h3 class="text-2xl font-bold mb-4 text-center text-white">Confirmar Plano</h3>
+        <div id="planDetails" class="text-center mb-6">
+            <!-- Detalhes do plano serão inseridos aqui -->
+        </div>
+        <div class="flex space-x-4">
+            <button onclick="closeModal()" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white py-3 px-6 rounded-lg transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmPlan()" class="flex-1 gold-gradient text-black font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification">
+    <span id="notificationText"></span>
+</div>
+
+<script>
+    let selectedPlan = '';
+
+    const planDetails = {
+        basic: {
+            name: 'Basic',
+            price: 'R$ 29/mês',
+            description: 'Anúncio básico com informações essenciais'
+        },
+        plus: {
+            name: 'Plus',
+            price: 'R$ 59/mês',
+            description: 'Destaque na busca e mais fotos'
+        },
+        pro: {
+            name: 'Pro',
+            price: 'R$ 99/mês',
+            description: 'Máxima exposição e posição no topo'
+        }
+    };
+
+    function selectPlan(plan) {
+        selectedPlan = plan;
+        const details = planDetails[plan];
+
+        document.getElementById('planDetails').innerHTML = `
+                <div class="text-center">
+                    <h4 class="text-xl font-bold text-gradient mb-2">Plano ${details.name}</h4>
+                    <p class="text-2xl font-bold mb-2 text-white">${details.price}</p>
+                    <p class="text-gray-300">${details.description}</p>
+                </div>
+            `;
+
+        document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    function confirmPlan() {
+        closeModal();
+        showNotification(`Plano ${planDetails[selectedPlan].name} selecionado com sucesso! Redirecionando para pagamento...`, 'success');
+
+        // Simular redirecionamento após 2 segundos
+        setTimeout(() => {
+            showNotification('Funcionalidade de pagamento será implementada em breve!', 'error');
+        }, 2000);
+    }
+
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 4000);
+    }
+
+    // Fechar modal clicando fora
+    document.getElementById('confirmModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f198f81706f617',t:'MTc2MDU1NTIyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

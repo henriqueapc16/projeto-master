@@ -1,0 +1,61 @@
+# Como mostrar o QR code no front (exemplo rápido)
+
+Se o SDK retornar qr_code_base64, você pode renderizar direto no HTML assim:
+
+<!-- view.erb -->
+<img src="data:image/png;base64,<%= @payment['point_of_interaction']['transaction_data']['qr_code_base64'] %>" alt="QRCode PIX">
+<p>Código PIX: <%= @payment['point_of_interaction']['transaction_data']['qr_code'] %></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+require 'net/http'
+require 'uri'
+require 'json'
+
+# 1️⃣ Login e pegar token
+uri = URI("https://api-serasa.sollosconsultas.com.br/login")
+req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+req.body = { user_login: "gstv", password: "Gustavo123" }.to_json
+
+res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+  http.request(req)
+end
+
+unless res.is_a?(Net::HTTPSuccess)
+  puts "Erro no login: #{res.code}"
+  exit
+end
+
+token = JSON.parse(res.body)["token"]
+puts "Token obtido: #{token}"
+
+# 2️⃣ Consultar CPF usando o token
+cpf = "00000001163"
+uri_cpf = URI("https://api-serasa.sollosconsultas.com.br/top-score/pf/#{cpf}")
+req_cpf = Net::HTTP::Get.new(uri_cpf)
+req_cpf['x-access-token'] = token
+
+res_cpf = Net::HTTP.start(uri_cpf.hostname, uri_cpf.port, use_ssl: true) do |http|
+  http.request(req_cpf)
+end
+
+if res_cpf.is_a?(Net::HTTPSuccess)
+  resultado = JSON.parse(res_cpf.body)
+  puts "Consulta CPF:"
+  puts resultado
+else
+  puts "Erro na consulta CPF: #{res_cpf.code}"
+end

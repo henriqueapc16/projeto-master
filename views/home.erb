@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberConnect - Sua Barbearia Digital</title>
+    <link rel="stylesheet" href="/css/Home.css">
+    <script defer src="/js/Home.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-black text-white">
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+<!-- Profile Button -->
+<div class="fixed top-4 right-4 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center cursor-pointer shadow-lg z-50" onclick="window.location.href='/perfil'">
+    <i class="fas fa-user text-black"></i>
+</div>
+
+<!-- Header -->
+<header class="bg-transparent backdrop-blur-md border-b border-gray-800/50 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cut text-black text-lg"></i>
+                </div>
+                <h1 class="text-xl font-bold text-white">BarberConnect</h1>
+            </div>
+
+            <nav id="navigation" class="hidden md:flex space-x-8">
+                <a href="#" onclick="showSection('home')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Início</a>
+                <a href="#" onclick="showSection('appointments')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Agendar</a>
+                <a href="#" onclick="showSection('barbers')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Barbeiros</a>
+                <a href="#" onclick="showSection('shop')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Loja</a>
+                <a href="#" onclick="showSection('contact')" class="nav-link text-gray-300 hover:text-white transition-colors text-sm font-medium">Contato</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <div id="userInfo" class="hidden items-center space-x-3">
+                    <img id="userAvatar" src="" alt="Avatar do usuário" class="w-8 h-8 rounded-full">
+                    <span id="userName" class="text-sm"></span>
+                    <button onclick="logout()" class="text-red-400 hover:text-red-300">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+                <div id="authButtons" class="flex space-x-3">
+                    <button onclick="openModal('loginModal')" class="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+                        Login
+                    </button>
+                    <button onclick="openModal('registerModal')" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg transition-colors text-sm font-medium">
+                        Cadastrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 border-t border-gray-800/50 pt-4">
+            <nav class="flex flex-col space-y-3">
+                <a href="#" onclick="showSection('home')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Início</a>
+                <a href="#" onclick="showSection('appointments')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Agendar</a>
+                <a href="#" onclick="showSection('barbers')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Barbeiros</a>
+                <a href="#" onclick="showSection('shop')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Loja</a>
+                <a href="#" onclick="showSection('contact')" class="text-gray-300 hover:text-white transition-colors py-2 text-sm">Contato</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main id="main-content" class="min-h-screen">
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <!-- Hero Banner -->
+        <div class="relative h-96 bg-gradient-to-r from-black via-gray-800 to-black flex items-center" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&h=400&fit=crop'); background-size: cover; background-position: center;">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-5xl font-bold mb-4">Transforme seu Visual</h2>
+                <p class="text-xl mb-8 text-gray-300">Os melhores barbeiros da cidade em um só lugar</p>
+                <button onclick="showSection('appointments')" class="gold-gradient text-black px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
+                    Agende seu Corte Agora!
+                </button>
+            </div>
+        </div>
+
+        <!-- Featured Barbers -->
+        <div class="container mx-auto px-4 py-16">
+            <h3 class="text-3xl font-bold text-center mb-12">Nossos Barbeiros Destaque</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg p-6 card-hover">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="João Silva" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                    <h4 class="text-xl font-semibold text-center mb-2">João Silva</h4>
+                    <p class="text-gray-400 text-center mb-4">Especialista em cortes clássicos</p>
+                    <div class="flex justify-center mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="ml-2 text-gray-300">4.9 (127 avaliações)</span>
+                        </div>
+                    </div>
+                    <button onclick="scheduleWithBarber('joao')" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg transition-colors">
+                        Agendar com João
+                    </button>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 card-hover">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" alt="Carlos Mendes" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                    <h4 class="text-xl font-semibold text-center mb-2">Carlos Mendes</h4>
+                    <p class="text-gray-400 text-center mb-4">Expert em barbas e bigodes</p>
+                    <div class="flex justify-center mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="ml-2 text-gray-300">4.8 (89 avaliações)</span>
+                        </div>
+                    </div>
+                    <button onclick="scheduleWithBarber('carlos')" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg transition-colors">
+                        Agendar com Carlos
+                    </button>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 card-hover">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face" alt="Rafael Costa" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                    <h4 class="text-xl font-semibold text-center mb-2">Rafael Costa</h4>
+                    <p class="text-gray-400 text-center mb-4">Cortes modernos e estilosos</p>
+                    <div class="flex justify-center mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="ml-2 text-gray-300">4.9 (156 avaliações)</span>
+                        </div>
+                    </div>
+                    <button onclick="scheduleWithBarber('rafael')" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg transition-colors">
+                        Agendar com Rafael
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Cuts Gallery -->
+        <div class="bg-gray-800 py-16">
+            <div class="container mx-auto px-4">
+                <h3 class="text-3xl font-bold text-center mb-12">Cortes Recentes</h3>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="bg-gray-700 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=200&fit=crop" alt="Corte Clássico" class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <p class="text-sm text-gray-300">Corte Clássico - João Silva</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=300&h=200&fit=crop" alt="Barba Estilizada" class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <p class="text-sm text-gray-300">Barba Estilizada - Carlos Mendes</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=300&h=200&fit=crop" alt="Fade Moderno" class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <p class="text-sm text-gray-300">Fade Moderno - Rafael Costa</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=300&h=200&fit=crop" alt="Corte + Barba" class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <p class="text-sm text-gray-300">Corte + Barba - João Silva</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="container mx-auto px-4 py-16">
+            <h3 class="text-3xl font-bold text-center mb-12">O que nossos clientes dizem</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="star-rating mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-4">"Excelente atendimento! O João fez um trabalho incrível no meu corte. Super recomendo!"</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" alt="Pedro Santos" class="w-10 h-10 rounded-full mr-3 object-cover">
+                        <div>
+                            <p class="font-semibold">Pedro Santos</p>
+                            <p class="text-sm text-gray-400">Cliente há 2 anos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="star-rating mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-4">"Ambiente top e profissionais qualificados. Sempre saio satisfeito daqui!"</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Lucas Oliveira" class="w-10 h-10 rounded-full mr-3 object-cover">
+                        <div>
+                            <p class="font-semibold">Lucas Oliveira</p>
+                            <p class="text-sm text-gray-400">Cliente há 1 ano</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="star-rating mb-4">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-4">"Sistema de agendamento muito prático. Nunca mais perdi tempo esperando!"</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" alt="André Silva" class="w-10 h-10 rounded-full mr-3 object-cover">
+                        <div>
+                            <p class="font-semibold">André Silva</p>
+                            <p class="text-sm text-gray-400">Cliente há 6 meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appointments Section -->
+    <section id="appointments" class="section hidden">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8">Sistema de Agendamentos</h2>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Booking Form -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-6">Agendar Novo Corte</h3>
+                    <form id="bookingForm" onsubmit="makeAppointment(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Barbeiro</label>
+                            <select id="barberSelect" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+                                <option value="">Selecione um barbeiro</option>
+                                <option value="joao">João Silva - Cortes Clássicos</option>
+                                <option value="carlos">Carlos Mendes - Barbas e Bigodes</option>
+                                <option value="rafael">Rafael Costa - Cortes Modernos</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Serviço</label>
+                            <select id="serviceSelect" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+                                <option value="">Selecione um serviço</option>
+                                <option value="corte">Corte de Cabelo - R$ 35</option>
+                                <option value="barba">Barba - R$ 25</option>
+                                <option value="corte-barba">Corte + Barba - R$ 55</option>
+                                <option value="sobrancelha">Sobrancelha - R$ 15</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
