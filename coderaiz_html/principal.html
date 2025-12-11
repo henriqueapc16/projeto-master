@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="principal_style.css" />
+    <link rel="stylesheet" href="extensao_carrinho_busca.css">
   </head>
   <body class="bg-gray-900 text-white">
     <!-- Notification -->
@@ -155,11 +156,14 @@
               </p>
               <div class="flex justify-center">
                 <div class="relative max-w-md w-full">
-                  <input
-                    type="text"
-                    placeholder="Buscar barbearias..."
-                    class="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:border-yellow-400"
-                  />
+                    <input
+                            id="searchInput"
+                            type="text"
+                            placeholder="Buscar barbearias ..."
+                            class="w-full bg-white/10 backdrop-blur-md border border-white/20
+                                     rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none
+                                    focus:border-yellow-400"
+                    />
                   <button
                     class="absolute right-2 top-2 bg-yellow-400 text-black p-2 rounded-md hover:bg-yellow-500 transition-colors"
                   >
@@ -364,4 +368,5 @@
     </section>
   </body>
   <script src="principal_script.js"></script>
+  <script src="extensao_carrinho_busca.js"></script>
 </html>

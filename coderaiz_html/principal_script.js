@@ -484,6 +484,43 @@
                 showNotification('Geolocalização não suportada', 'error');
             }
         }
+function renderFeaturedBarbershops(list) {
+  const container = document.getElementById('featuredBarbershops');
+  if (!container) return;
+
+  container.innerHTML = list.map(b => `
+    <div class="barbershop-card p-4 rounded-lg bg-gray-800">
+      <img src="${b.image}" alt="${b.name}" class="w-full h-48 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-bold mb-2">${b.name}</h3>
+      <p class="text-gray-400 mb-2">${b.description}</p>
+      <span class="text-yellow-400 font-semibold">⭐ ${b.rating} (${b.reviews} avaliações)</span>
+    </div>
+  `).join('');
+}
+
+function searchBarbershopsHome(query) {
+  const searchTerm = query.toLowerCase();
+  const filtered = barbershops.filter(b =>
+    b.name.toLowerCase().includes(searchTerm) ||
+    b.description.toLowerCase().includes(searchTerm)
+  );
+  renderFeaturedBarbershops(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchBarbershopsHome(e.target.value);
+    });
+  }
+
+  // Inicializa com todas as barbearias
+  renderFeaturedBarbershops(barbershops);
+});
+
+
+
 
         function loadNearbyBarbershops() {
             const container = document.getElementById('nearbyBarbershopsList');
